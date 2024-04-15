@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //Solver env variable issue
+  url      = "postgresql://backend_dev:password@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
+}
+
+model cursuri {
+  id         Int        @id @db.SmallInt
+  titlu_curs String     @db.VarChar(52)
+  an         Decimal?   @db.Decimal(1, 0)
+  semestru   Decimal?   @db.Decimal(1, 0)
+  credite    Decimal?   @db.Decimal(2, 0)
+  created_at DateTime?  @db.Timestamptz(6)
+  updated_at DateTime?  @db.Timestamptz(6)
+  didactic   didactic[]
+  note       note[]
+}
+
+model didactic {
+  id          Int       @id @db.SmallInt
+  id_profesor Int       @db.SmallInt
+  id_curs     Int       @db.SmallInt
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  cursuri     cursuri   @relation(fields: [id_curs], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_didactic_id_curs")
+  profesori   profesori @relation(fields: [id_profesor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_didactic_id_profesor")
+}
+
+model note {
+  id          Int       @id @db.SmallInt
+  id_student  Int       @db.SmallInt
+  id_curs     Int       @db.SmallInt
+  valoare     Decimal?  @db.Decimal(2, 0)
+  data_notare DateTime? @db.Date
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  cursuri     cursuri   @relation(fields: [id_curs], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_note_id_curs")
+  studenti    studenti  @relation(fields: [id_student], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_note_id_student")
+}
+
+model prieteni {
+  id                                      Int       @id @db.SmallInt
+  id_student1                             Int       @db.SmallInt
+  id_student2                             Int       @db.SmallInt
+  created_at                              DateTime? @db.Timestamptz(6)
+  updated_at                              DateTime? @db.Timestamptz(6)
+  studenti_prieteni_id_student1Tostudenti studenti  @relation("prieteni_id_student1Tostudenti", fields: [id_student1], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_prieteni_id_student1")
+  studenti_prieteni_id_student2Tostudenti studenti  @relation("prieteni_id_student2Tostudenti", fields: [id_student2], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_prieteni_id_student2")
+
+  @@unique([id_student1, id_student2], map: "no_duplicates")
+}
+
+model profesori {
+  id            Int        @id @db.SmallInt
+  nume          String     @db.VarChar(15)
+  prenume       String     @db.VarChar(30)
+  grad_didactic String?    @db.VarChar(20)
+  created_at    DateTime?  @db.Timestamptz(6)
+  updated_at    DateTime?  @db.Timestamptz(6)
+  didactic      didactic[]
+}
+
+model studenti {
+  id                                      Int        @id @db.SmallInt
+  nr_matricol                             String     @db.VarChar(6)
+  nume                                    String     @db.VarChar(15)
+  prenume                                 String     @db.VarChar(30)
+  an                                      Decimal?   @db.Decimal(1, 0)
+  grupa                                   String?    @db.Char(2)
+  bursa                                   Decimal?   @db.Decimal(6, 2)
+  data_nastere                            DateTime?  @db.Date
+  email                                   String?    @db.VarChar(40)
+  created_at                              DateTime?  @db.Timestamptz(6)
+  updated_at                              DateTime?  @db.Timestamptz(6)
+  note                                    note[]
+  prieteni_prieteni_id_student1Tostudenti prieteni[] @relation("prieteni_id_student1Tostudenti")
+  prieteni_prieteni_id_student2Tostudenti prieteni[] @relation("prieteni_id_student2Tostudenti")
+}
+
+model users {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(50)
+  age        Int?
+  email      String?   @db.VarChar(100)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model test {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(50)
+  age        Int?
+  email      String?   @db.VarChar(100)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+}
