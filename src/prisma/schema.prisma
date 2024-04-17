@@ -5,7 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   //Solver env variable issue
-  url      = "postgresql://backend_dev:password@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
+  url      = "postgresql://backend_dev:i am become death@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
 }
 
 model cursuri {
