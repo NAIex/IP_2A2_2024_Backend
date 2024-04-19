@@ -8,8 +8,23 @@ datasource db {
   url      = "postgresql://backend_dev:i am become death@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
 }
 
-model users {
-  name       String   @unique @db.VarChar(50)
-  email      String   @db.VarChar(50)
-  password   String   @db.VarChar(21)
+model User {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  password      String        @db.VarChar(60)
+  user_type     String        @default("user")
+  log_status    Boolean       @default(false)
+  ban_status    Boolean?      @default(false)
+  unbanned_date DateTime?
+  mute_status   Boolean       @default(false)
+  unmute_date   DateTime?     
+  random_name   String?       @db.VarChar(50)
+}
+
+model Admin {
+  id          Int         @id @default(autoincrement())
+  email       String      @unique
+  password    String
+  user_type   String      @default("admin")
+  log_status  Boolean     @default(false)
 }
