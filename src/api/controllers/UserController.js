@@ -4,10 +4,8 @@
 // }
 import prisma from "../../prisma/index.js";
 
-export const getUsers = async (req,res)=>{
-    
+export const getUsers = async (req, res) => {
+
     const users = await prisma.users.findMany();
     res.send(users);
 }
-
- 
