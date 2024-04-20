@@ -1,8 +1,4 @@
 import auth from "../services/auth.services.js";
-// import createError from "http-errors";
-
-// const auth = require('../services/auth.service');
-// const createError = require('http-errors');
 
 class authController {
 
@@ -30,6 +26,7 @@ class authController {
                 data
             })
         } catch (e) {
+            console.log(e);
             res.send(e);
         }
     }
@@ -43,6 +40,7 @@ class authController {
                 data
             })
         } catch (e) {
+            console.log(e);
             res.send(e);
         }
     }

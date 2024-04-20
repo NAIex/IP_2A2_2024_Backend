@@ -1,9 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "../utils/jwt.js";
+import createError from "http-errors";
 
 import prisma from "../../prisma/index.js";
-
-// require('dotenv').config();
 
 class AuthService {
 
@@ -44,7 +43,7 @@ class AuthService {
         });
     
         if (!user) throw createError.NotFound('User not registered');
-    
+
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
     
@@ -59,26 +58,24 @@ class AuthService {
     }
 
     static async logout(userData) {
-        const { email, password } = userData;
+        const { email } = userData;
     
         const user = await prisma.User.findUnique({
             where: { email: email },
         });
     
-        if (!user) throw createError.NotFound('User not registered');
-    
-        const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
+        if (!user) {
+            throw new Error('User not found');
+        }
     
         await prisma.User.update({
             where: { email: email },
             data: { log_status: false },
         });
     
-        const { password: _, ...userWithoutPassword } = user;
-    
-        return userWithoutPassword;
+        return { message: "Successfully logged out" };
     }
+    
     
     static async all() {
         const allUsers = await prisma.users.findMany();
