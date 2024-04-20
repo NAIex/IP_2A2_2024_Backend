@@ -1,23 +1,24 @@
 import bcrypt from "bcryptjs";
 import jwt from "../utils/jwt.js";
 import createError from "http-errors";
-
 import prisma from "../../prisma/index.js";
 
 class AuthService {
 
-    static async register(userData) {
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
+    // just for testing, not the actual function
     
-        let newUser = await prisma.User.create({
-            data: {
-                email: userData.email,
-                password: hashedPassword
-            },
-        })
+    // static async register(userData) {
+    //     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
-        return newUser;
-    }
+    //     let newUser = await prisma.User.create({
+    //         data: {
+    //             email: userData.email,
+    //             password: hashedPassword
+    //         },
+    //     })
+    
+    //     return newUser;
+    // }
 
     static async login(userData) {
         const { email, password } = userData;
