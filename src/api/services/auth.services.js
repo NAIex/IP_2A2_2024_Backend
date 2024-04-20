@@ -6,22 +6,6 @@ import prisma from "../../prisma/index.js";
 
 class AuthService {
 
-    // static async register(userData) {
-    //     // const { email } = data.email;
-    //     // const { password } = data.password;
-    //     // let user = await prisma.User.create({ data });
-    //     const hashed = await bcrypt.hash(userData.password, 10);
-
-    //     let newUser = await prisma.User.create({
-    //         data: {
-    //             email: userData.email,
-    //             password: hashed
-    //         },
-    //     })
-
-    //     return newUser;
-    // }
-
     static async register(userData) {
         const hashedPassword = await bcrypt.hash(userData.password, 10);
     
@@ -37,8 +21,12 @@ class AuthService {
 
     static async login(userData) {
         const { email, password } = userData;
+
+        const isAdmin = email.endsWith("@admin.uaic.ro");
+
+        const model = isAdmin ? prisma.Admin : prisma.User;
     
-        const user = await prisma.User.findUnique({
+        const user = await model.findUnique({
             where: { email: email },
         });
     
@@ -47,7 +35,7 @@ class AuthService {
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
     
-        await prisma.User.update({
+        await model.update({
             where: { email: email },
             data: { log_status: true },
         });
@@ -59,8 +47,12 @@ class AuthService {
 
     static async logout(userData) {
         const { email } = userData;
+
+        const isAdmin = email.endsWith("@admin.uaic.ro");
+
+        const model = isAdmin ? prisma.Admin : prisma.User;
     
-        const user = await prisma.User.findUnique({
+        const user = await model.findUnique({
             where: { email: email },
         });
     
@@ -68,7 +60,7 @@ class AuthService {
             throw new Error('User not found');
         }
     
-        await prisma.User.update({
+        await model.update({
             where: { email: email },
             data: { log_status: false },
         });
