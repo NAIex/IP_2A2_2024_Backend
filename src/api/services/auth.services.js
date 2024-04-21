@@ -11,7 +11,7 @@ class AuthService {
         let model;
         if (email.endsWith("@admin.uaic.ro")) {
             model = prisma.Admin;
-        } else if (email.endsWith("@profesor.uaic.ro") || email.endsWith("@student.uaic.ro")) {
+        } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
             model = prisma.User;
         } else {
             throw createError.NotFound('Email format not recognized');
