@@ -37,5 +37,6 @@ model Community {
 model CommunityUser {
   id            Int       @id @default(autoincrement())
   user_id       Int       
-  community_id  Int       
-}
+  community_id  Int   
+  @@unique([user_id, community_id])    
+} 

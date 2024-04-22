@@ -45,8 +45,41 @@ export const addUserToCommunity = async (req, res) => {
     const user = await prisma.communityUser.create({
       data: { user_id, community_id },
     });
-    res.status(204).send("Successfully add");
+    res.status(201).send("Successfully add");
   } catch (e) {
     res.status(500).json(e);
   }
+};
+
+export const removeUserFromCommunity = async (req, res) => {
+  const { user_id, community_id } = req.body;
+  try {
+    const user_exists = await prisma.user.findUnique({
+      where: { id: user_id },
+    });
+    const community_exists = await prisma.community.findUnique({
+      where: { id: community_id },
+    });
+    if (!user_exists || !community_exists) {
+      res.status(404).send("Data [user_id, community_id] not found");
+      return;
+    }
+    const userDeleted = await prisma.communityUser.deleteMany({
+      where: { user_id: user_id, community_id: community_id },
+    });
+    if (userDeleted.count === 0) {
+      res
+        .status(404)
+        .send("No user found in the community with the provided IDs");
+      return;
+    }
+    res.status(204).send("Successful removal of the user from the community");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+export const getUserToCommunity = async (req, res) => {
+  const communities = await prisma.communityUser.findMany();
+  res.send(communities);
 };
