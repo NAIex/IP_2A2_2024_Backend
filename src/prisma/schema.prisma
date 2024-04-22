@@ -37,5 +37,5 @@ model Community {
 model CommunityUser {
   id            Int       @id @default(autoincrement())
   user_id       Int       
-  Community_id  Int       
+  community_id  Int       
 }
