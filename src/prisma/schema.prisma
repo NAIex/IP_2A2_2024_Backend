@@ -33,3 +33,9 @@ model Community {
   name          String    
   description   String?    
 }
+
+model CommunityUser {
+  id            Int       @id @default(autoincrement())
+  user_id       Int       
+  Community_id  Int       
+}
