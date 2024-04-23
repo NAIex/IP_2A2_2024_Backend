@@ -6,66 +6,121 @@ export const getCommunity = async (req, res) => {
   res.send(communities);
 };
 
+export const getUserToCommunity = async (req, res) => {
+  const communities = await prisma.communityUser.findMany();
+  res.send(communities);
+};
+
 export const addCommunity = async (req, res) => {
-  const { name, description } = req.body;
+  const { authorId, name, description } = req.body;
   try {
-    const community = await prisma.community.create({
-      data: { name, description },
+    const user = await prisma.user.findUnique({
+      where: { id: authorId },
     });
-    res.status(201).send("Successfully created");
+    if (!user) {
+      res.status(404).send("User with this id does not exist");
+      return;
+    }
+    const community = await prisma.community.create({
+      data: { author_id: authorId, name, description },
+    });
+    res.status(201).send("Successfully created community");
   } catch (e) {
     res.status(500).json(e);
   }
 };
 
 export const removeCommunity = async (req, res) => {
-  const { id } = req.body;
+  const { authorId, removeCommunityId } = req.body;
   try {
-    const community = await prisma.community.delete({ where: { id } });
-    res.status(204).send("Successfully removed");
+    const userExists = await prisma.user.findUnique({
+      where: { id: authorId },
+    });
+    if (!userExists) {
+      res.status(404).send("User with this id does not exist");
+      return;
+    }
+
+    const communityExists = await prisma.community.findUnique({
+      where: { id: removeCommunityId },
+    });
+    if (!communityExists) {
+      res.status(404).send("Community with this id does not exist");
+      return;
+    }
+
+    const userIsAuthor = await prisma.community.findUnique({
+      where: { id: removeCommunityId, author_id: authorId },
+    });
+    if (!userIsAuthor) {
+      res.status(401).send("Invalid authentication credentials");
+      return;
+    }
+
+    const community = await prisma.community.delete({
+      where: { id: removeCommunityId },
+    });
+    res.status(204).send("Successfully removed community");
   } catch (e) {
     res.status(500).json(e);
   }
 };
 
 export const addUserToCommunity = async (req, res) => {
-  const { user_id, community_id } = req.body;
+  const { userId, communityId } = req.body;
 
   try {
-    const user_exists = await prisma.user.findUnique({
-      where: { id: user_id },
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
     });
-    const community_exists = await prisma.community.findUnique({
-      where: { id: community_id },
+    if (!userExists) {
+      res.status(404).send("User with this id does not exist");
+      return;
+    }
+    const communityExists = await prisma.community.findUnique({
+      where: { id: communityId },
     });
-    if (!user_exists || !community_exists) {
-      res.status(404).send("Data [user_id, community_id] not found");
+    if (!communityExists) {
+      res.status(404).send("Community with this id does not exist");
       return;
     }
     const user = await prisma.communityUser.create({
-      data: { user_id, community_id },
+      data: { user_id: userId, community_id: communityId },
     });
-    res.status(201).send("Successfully add");
+    res.status(201).send("Successfully adding user to community");
   } catch (e) {
     res.status(500).json(e);
   }
 };
 
 export const removeUserFromCommunity = async (req, res) => {
-  const { user_id, community_id } = req.body;
+  const { authorId, userId, communityId } = req.body;
   try {
-    const user_exists = await prisma.user.findUnique({
-      where: { id: user_id },
+    const userExists = await prisma.user.findUnique({
+      where: { id: userId },
     });
-    const community_exists = await prisma.community.findUnique({
-      where: { id: community_id },
-    });
-    if (!user_exists || !community_exists) {
-      res.status(404).send("Data [user_id, community_id] not found");
+    if (!userExists) {
+      res.status(404).send("User with this id does not exist");
       return;
     }
+    const communityExists = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!communityExists) {
+      res.status(404).send("Community with this id does not exist");
+      return;
+    }
+
+    const userIsAuthor = await prisma.community.findUnique({
+      where: { id: communityId, author_id: authorId },
+    });
+    if (!userIsAuthor && authorId != userId) {
+      res.status(401).send("Invalid authentication credentials");
+      return;
+    }
+
     const userDeleted = await prisma.communityUser.deleteMany({
-      where: { user_id: user_id, community_id: community_id },
+      where: { user_id: userId, community_id: communityId },
     });
     if (userDeleted.count === 0) {
       res
@@ -77,9 +132,4 @@ export const removeUserFromCommunity = async (req, res) => {
   } catch (e) {
     res.status(500).json(e);
   }
-};
-
-export const getUserToCommunity = async (req, res) => {
-  const communities = await prisma.communityUser.findMany();
-  res.send(communities);
 };
