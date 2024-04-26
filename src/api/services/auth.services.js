@@ -10,26 +10,53 @@ class AuthService {
 
         const studentFormat = /^([a-z])+\.([a-z])+@student\.uaic\.ro$/;
 
-        let userType = "student";
+        const professorFormat = /^([a-z])+\.([a-z])+((@info\.uaic\.ro)|(@uaic\.ro))$/;
 
         const validStudentEmail = studentFormat.test(email);
 
-        if (!validStudentEmail) {
+        const validProfessorEmail = professorFormat.test(email);
 
-            userType = "professor";
+        if(!validStudentEmail && !validProfessorEmail) {
 
-            const professorFormat = /^([a-z])+\.([a-z])+((@info\.uaic\.ro)|(@uaic\.ro))$/;
+            const domainCheck = /^.*(@student\.uaic\.ro)|(@info\.uaic\.ro)|(@uaic\.ro)$/;
 
-            const validProfessorEmail = professorFormat.test(email);
+            if(!domainCheck.test(email)) {
+                throw createError.BadRequest('Email domain has to follow one of these formats:\nfor students - @student.uaic.ro\nfor professors - @info.uaic.ro or @uaic.ro');
+            }
 
-            if (!validProfessorEmail) throw createError.BadRequest('Invalid email');
+            throw createError.BadRequest('Invalid email name or email does not exist');
         }
+
+        let userType;
+
+        if(!validStudentEmail)
+            userType = "professor";
+        else userType = "student";
 
         const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{10,20}$/;
 
         const validPassword = passwordFormat.test(password);
 
-        if (!validPassword) throw createError.BadRequest('Invalid password');
+        if(!validPassword) {
+            const passwordErrors = [];
+
+            if (!/(?=.*[a-z])/.test(password)) {
+                passwordErrors.push('Password must contain at least one lowercase letter');
+            }
+            if (!/(?=.*[A-Z])/.test(password)) {
+                passwordErrors.push('Password must contain at least one uppercase letter');
+            }
+            if (!/(?=.*\d)/.test(password)) {
+                passwordErrors.push('Password must contain at least one digit');
+            }
+            if (!/(?=.*[\W_])/.test(password)) {
+                passwordErrors.push('Password must contain at least one special character');
+            }
+            if (!/.{10,20}/.test(password)) {
+                passwordErrors.push('Password must be between 10 and 20 characters long');
+            }
+            throw createError.BadRequest(`\n${passwordErrors.join('\n')}`);
+        } 
 
         const user = await prisma.User.findUnique({
             where: { email: email },
@@ -38,7 +65,7 @@ class AuthService {
         if (user) throw createError.Forbidden('Email already used');
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
-
+    
         let newUser = await prisma.User.create({
             data: {
                 email: userData.email,
@@ -46,7 +73,7 @@ class AuthService {
                 user_type: userType
             },
         })
-
+    
         return newUser;
     }
 
