@@ -4,7 +4,51 @@ import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 
 class AuthService {
+    static async register(userData) {
+        const { email, password } = userData;
+
+        const studentFormat = /^([a-z])+\.([a-z])+@student\.uaic\.ro$/;
+
+        let userType = "student";
+
+        const validStudentEmail = studentFormat.test(email);
+
+        if(!validStudentEmail){
+
+            userType = "professor";
+
+            const professorFormat = /^([a-z])+\.([a-z])+((@info\.uaic\.ro)|(@uaic\.ro))$/;
+
+            const validProfessorEmail = professorFormat.test(email);
+
+            if(!validProfessorEmail) throw createError.BadRequest('Invalid email');
+        }
+
+        const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{10,20}$/;
+
+        const validPassword = passwordFormat.test(password);
+
+        if(!validPassword) throw createError.BadRequest('Invalid password');
+
+        const user = await prisma.User.findUnique({
+            where: { email: email },
+        });
+
+        if (user) throw createError.Forbidden('Email already used');
+
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
     
+        let newUser = await prisma.User.create({
+            data: {
+                email: userData.email,
+                password: hashedPassword,
+                user_type: userType
+            },
+        })
+    
+        return newUser;
+    }
+
     static async login(userData) {
         const { email, password } = userData;
 
