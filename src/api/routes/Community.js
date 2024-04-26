@@ -16,6 +16,14 @@ router.get("/", getCommunity);
 router.get("/get-user", getUserToCommunity);
 
 router.post("/", body("name").notEmpty(), ErrorMiddleware, addCommunity);
+router.delete(
+  "/",
+  body("userId").notEmpty(),
+  body("removeCommunityId").notEmpty(),
+  ErrorMiddleware,
+  removeCommunity
+);
+
 router.post(
   "/add-user",
   body("userId").notEmpty(),
@@ -24,17 +32,9 @@ router.post(
   addUserToCommunity
 );
 router.delete(
-  "/",
-  body("authorId").notEmpty(),
-  body("removeCommunityId").notEmpty(),
-  ErrorMiddleware,
-  removeCommunity
-);
-
-router.delete(
   "/remove-user",
-  body("authorId").notEmpty(),
   body("userId").notEmpty(),
+  body("userToRemoveId").notEmpty(),
   body("communityId").notEmpty(),
   ErrorMiddleware,
   removeUserFromCommunity
