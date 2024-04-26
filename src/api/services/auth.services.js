@@ -4,6 +4,7 @@ import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 
 class AuthService {
+
     static async register(userData) {
         const { email, password } = userData;
 
@@ -13,7 +14,7 @@ class AuthService {
 
         const validStudentEmail = studentFormat.test(email);
 
-        if(!validStudentEmail){
+        if (!validStudentEmail) {
 
             userType = "professor";
 
@@ -21,14 +22,14 @@ class AuthService {
 
             const validProfessorEmail = professorFormat.test(email);
 
-            if(!validProfessorEmail) throw createError.BadRequest('Invalid email');
+            if (!validProfessorEmail) throw createError.BadRequest('Invalid email');
         }
 
         const passwordFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{10,20}$/;
 
         const validPassword = passwordFormat.test(password);
 
-        if(!validPassword) throw createError.BadRequest('Invalid password');
+        if (!validPassword) throw createError.BadRequest('Invalid password');
 
         const user = await prisma.User.findUnique({
             where: { email: email },
@@ -37,7 +38,7 @@ class AuthService {
         if (user) throw createError.Forbidden('Email already used');
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
-    
+
         let newUser = await prisma.User.create({
             data: {
                 email: userData.email,
@@ -45,7 +46,7 @@ class AuthService {
                 user_type: userType
             },
         })
-    
+
         return newUser;
     }
 
@@ -93,23 +94,23 @@ class AuthService {
         } else {
             throw createError.NotFound('Email format not recognized');
         }
-    
+
         const user = await model.findUnique({
             where: { email: email },
         });
-    
+
         if (!user) {
             throw new Error('User not found');
         }
-    
+
         await model.update({
             where: { email: email },
             data: { log_status: false },
         });
-    
+
         return { message: "Successfully logged out" };
     }
-        
+
     static async all() {
         const allUsers = await prisma.users.findMany();
         return allUsers;
