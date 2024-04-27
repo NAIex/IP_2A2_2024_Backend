@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 
 const options = {
     definition: {
-        openapi: "3.0.0",
+        /*openapi: "3.0.0",*/
         info: {
             title: 'REST API Docs',
             version: "5.0.0"
@@ -18,7 +18,7 @@ const options = {
         ],
     },
 
-    apis: ['./api/routes/*.js']
+    apis: ['./api/routes/*.js', './api/controllers/*.js', './api/services/*.js']
 
 };
 
