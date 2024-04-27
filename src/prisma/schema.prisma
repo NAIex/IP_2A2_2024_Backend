@@ -30,6 +30,14 @@ model User {
 
 model Community {
   id            Int       @id @default(autoincrement())
+  author_id     Int
   name          String    
   description   String?    
 }
+
+model CommunityUser {
+  id            Int       @id @default(autoincrement())
+  user_id       Int       
+  community_id  Int   
+  @@unique([user_id, community_id])    
+} 
