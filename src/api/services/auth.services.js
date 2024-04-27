@@ -51,37 +51,6 @@ class AuthService {
         return newUser;
     }
 
-    // static async login(userData) {
-    //     const { email, password } = userData;
-
-    //     let model;
-    //     if (email.endsWith("@admin.uaic.ro")) {
-    //         model = prisma.Admin;
-    //     } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
-    //         model = prisma.User;
-    //     } else {
-    //         throw createError.NotFound('Email format not recognized');
-    //     }
-
-    //     const user = await model.findUnique({
-    //         where: { email: email },
-    //     });
-
-    //     if (!user) throw createError.NotFound('User not registered');
-
-    //     const checkPassword = await bcrypt.compare(password, user.password);
-    //     if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
-
-    //     await model.update({
-    //         where: { email: email },
-    //         data: { log_status: true },
-    //     });
-
-    //     const { password: _, ...userWithoutPassword } = user;
-
-    //     return userWithoutPassword;
-    // }
-
     static async login(userData) {
 
         const { email, password, chosenName } = userData;
