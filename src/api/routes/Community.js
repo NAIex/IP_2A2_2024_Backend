@@ -9,7 +9,19 @@ import {
   addUserToCommunity,
   removeUserFromCommunity,
 } from "../controllers/CommunityController.js";
+
+
 const router = Router();
+
+/**
+ * @swagger
+ * /sample:
+ *   get:
+ *     summary: Returns a sample message
+ *     responses:
+ *       200:
+ *         description: A successful response
+ */
 
 // only  for debbuging
 router.get("/", getCommunity);
