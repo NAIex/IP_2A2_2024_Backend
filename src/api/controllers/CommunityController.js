@@ -6,7 +6,7 @@ export const getCommunity = async (req, res) => {
   res.send(communities);
 };
 
-export const getUserToCommunity = async (req, res) => {
+export const getUserCommunity = async (req, res) => {
   const communities = await prisma.communityUser.findMany();
   res.send(communities);
 };
@@ -18,7 +18,7 @@ export const addCommunity = async (req, res) => {
       where: { id: authorId },
     });
     if (!user) {
-      res.status(404).send("User with this id does not exist");
+      res.status(404).send("User does not exist");
       return;
     }
     const community = await prisma.community.create({
@@ -39,7 +39,7 @@ export const removeCommunity = async (req, res) => {
     });
 
     if (!user) {
-      res.status(404).send("User with this id does not exist");
+      res.status(404).send("User does not exist");
       return;
     }
 
@@ -47,7 +47,7 @@ export const removeCommunity = async (req, res) => {
       where: { id: removeCommunityId },
     });
     if (!communityExists) {
-      res.status(404).send("Community with this id does not exist");
+      res.status(404).send("Community does not exist");
       return;
     }
 
@@ -56,7 +56,7 @@ export const removeCommunity = async (req, res) => {
     });
 
     if (!userIsAuthor && user.user_type != "admin") {
-      res.status(401).send("Invalid authentication credentials");
+      res.status(401).send("Unauthorized");
       return;
     }
 
@@ -81,20 +81,20 @@ export const addUserToCommunity = async (req, res) => {
       where: { id: userId },
     });
     if (!userExists) {
-      res.status(404).send("User with this id does not exist");
+      res.status(404).send("User does not exist");
       return;
     }
     const communityExists = await prisma.community.findUnique({
       where: { id: communityId },
     });
     if (!communityExists) {
-      res.status(404).send("Community with this id does not exist");
+      res.status(404).send("Community does not exist");
       return;
     }
     const user = await prisma.communityUser.create({
       data: { user_id: userId, community_id: communityId },
     });
-    res.status(201).send("Successfully adding user to community");
+    res.status(201).send("Successfully added user to community");
   } catch (e) {
     res.status(500).json(e);
   }
@@ -108,21 +108,21 @@ export const removeUserFromCommunity = async (req, res) => {
       select: { user_type: true },
     });
     if (!user) {
-      res.status(404).send("ID user does not exist");
+      res.status(404).send("User does not exist");
       return;
     }
     const userToRemoveExists = await prisma.user.findUnique({
       where: { id: userToRemoveId },
     });
     if (!userToRemoveExists) {
-      res.status(404).send("ID user to remove does not exist");
+      res.status(404).send("User to remove does not exist");
       return;
     }
     const communityExists = await prisma.community.findUnique({
       where: { id: communityId },
     });
     if (!communityExists) {
-      res.status(404).send("Community with this id does not exist");
+      res.status(404).send("Community does not exist");
       return;
     }
 
@@ -134,7 +134,7 @@ export const removeUserFromCommunity = async (req, res) => {
       userId != userToRemoveId &&
       user.user_type != "admin"
     ) {
-      res.status(401).send("Invalid authentication credentials");
+      res.status(401).send("Unauthorized");
       return;
     }
 

@@ -5,7 +5,7 @@ import {
   getCommunity,
   addCommunity,
   removeCommunity,
-  getUserToCommunity,
+  getUserCommunity,
   addUserToCommunity,
   removeUserFromCommunity,
 } from "../controllers/CommunityController.js";
@@ -13,7 +13,7 @@ const router = Router();
 
 // only  for debbuging
 router.get("/", getCommunity);
-router.get("/get-user", getUserToCommunity);
+router.get("/get-user", getUserCommunity);
 
 router.post("/", body("name").notEmpty(), ErrorMiddleware, addCommunity);
 router.delete(
