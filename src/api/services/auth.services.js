@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "../utils/jwt.js";
 import createError from "http-errors";
+import { faker } from "@faker-js/faker";
 import prisma from "../../prisma/index.js";
 
 class AuthService {
@@ -50,10 +51,42 @@ class AuthService {
         return newUser;
     }
 
-    static async login(userData) {
-        const { email, password } = userData;
+    // static async login(userData) {
+    //     const { email, password } = userData;
 
+    //     let model;
+    //     if (email.endsWith("@admin.uaic.ro")) {
+    //         model = prisma.Admin;
+    //     } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
+    //         model = prisma.User;
+    //     } else {
+    //         throw createError.NotFound('Email format not recognized');
+    //     }
+
+    //     const user = await model.findUnique({
+    //         where: { email: email },
+    //     });
+
+    //     if (!user) throw createError.NotFound('User not registered');
+
+    //     const checkPassword = await bcrypt.compare(password, user.password);
+    //     if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
+
+    //     await model.update({
+    //         where: { email: email },
+    //         data: { log_status: true },
+    //     });
+
+    //     const { password: _, ...userWithoutPassword } = user;
+
+    //     return userWithoutPassword;
+    // }
+
+    static async login(userData) {
+
+        const { email, password, chosenName } = userData;
         let model;
+
         if (email.endsWith("@admin.uaic.ro")) {
             model = prisma.Admin;
         } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
@@ -66,10 +99,20 @@ class AuthService {
             where: { email: email },
         });
 
-        if (!user) throw createError.NotFound('User not registered');
+        if (!user) {
+            throw createError.NotFound('User not registered');
+        }
 
         const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
+        if (!checkPassword) {
+            throw createError.Unauthorized('Email address or password not valid');
+        }
+
+        if (chosenName) {
+            await AuthService.assignRandomName(user.id, chosenName);
+        } else {
+            throw createError.BadRequest('Name must be provided');
+        } 
 
         await model.update({
             where: { email: email },
@@ -81,8 +124,36 @@ class AuthService {
         return userWithoutPassword;
     }
 
-    // just for testing, not the actual function
+    static async assignRandomName(userId, chosenName) {
 
+        const existingUser = await prisma.User.findFirst({
+            where: { random_name: chosenName }
+        });
+
+        if (existingUser) {
+            throw createError.Conflict('This name is already taken');
+        }
+
+        const updatedUser = await prisma.User.update({
+            where: { id: userId },
+            data: { random_name: chosenName }
+        });
+
+        return updatedUser;
+    }
+
+    static async generateRandomName() { // OK - change for cute names instead of normal ones 
+        let randomNames = [];
+        for (let i = 0; i < 15; i++) {
+            let firstName = faker.person.firstName();
+            let lastName = faker.person.lastName();
+            let fullName = `${firstName} ${lastName}`;
+            randomNames.push(fullName);
+        }
+        return randomNames;
+    }   
+
+    // just for testing, not the actual function
     static async logout(userData) {
         const { email } = userData;
 
@@ -105,7 +176,7 @@ class AuthService {
 
         await model.update({
             where: { email: email },
-            data: { log_status: false },
+            data: { log_status: false, random_name: null },
         });
 
         return { message: "Successfully logged out" };

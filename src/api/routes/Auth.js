@@ -9,6 +9,7 @@ const router = Router();
 router.post('/register', user.register);
 router.post('/login', user.login);
 router.post('/logout', user.logout);
+router.post('/generateRandomName', user.generateRandomName);
 router.get('/', auth, user.all);
 
 export default router;
