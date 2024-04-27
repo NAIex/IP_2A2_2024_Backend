@@ -3,6 +3,7 @@ import jwt from "../utils/jwt.js";
 import createError from "http-errors";
 import { faker } from "@faker-js/faker";
 import prisma from "../../prisma/index.js";
+import { promises as fsPromises } from 'fs';
 
 class AuthService {
 
@@ -81,7 +82,7 @@ class AuthService {
             await AuthService.assignRandomName(user.id, chosenName);
         } else {
             throw createError.BadRequest('Name must be provided');
-        } 
+        }
 
         await model.update({
             where: { email: email },
@@ -111,16 +112,36 @@ class AuthService {
         return updatedUser;
     }
 
-    static async generateRandomName() { // OK - change for cute names instead of normal ones 
-        let randomNames = [];
+    static getRandomElement(array) {
+        const randomIndex = Math.floor(Math.random() * array.length);
+        return array[randomIndex];
+    }
+
+    static async generateRandomName() {
+        const data = await fsPromises.readFile(`/home/helio/Desktop/IP_2A2_2024_Backend/src/api/services/cuteNames.json`, 'utf8');
+        const namesJson = JSON.parse(data);
+
+        const namesList = [];
+
         for (let i = 0; i < 15; i++) {
-            let firstName = faker.person.firstName();
-            let lastName = faker.person.lastName();
-            let fullName = `${firstName} ${lastName}`;
-            randomNames.push(fullName);
+            const formatChoice = Math.floor(Math.random() * 3);
+            let name = '';
+
+            if (formatChoice === 0) {
+                name = this.getRandomElement(namesJson.X1) + this.getRandomElement(namesJson.A) + this.getRandomElement(namesJson.X3);
+            } else if (formatChoice === 1) {
+                name = this.getRandomElement(namesJson.X1) + this.getRandomElement(namesJson.B) + this.getRandomElement(namesJson.X3);
+            } else if (formatChoice === 2) {
+                name = "Your" + this.getRandomElement(namesJson.C) + this.getRandomElement(namesJson.A) + this.getRandomElement(namesJson.X3);
+            }
+
+            name = name.replace(/The/g, '');
+
+            namesList.push(name);
         }
-        return randomNames;
-    }   
+
+        return namesList;
+    }
 
     // just for testing, not the actual function
     static async logout(userData) {
