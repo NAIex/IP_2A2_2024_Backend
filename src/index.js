@@ -1,10 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
-const app = express();
-const port = 4000;
+import swaggerUi from 'swagger-ui-express';
+import specs from "./api/utils/swagger.js";
 
 import User from "./api/routes/User.js";
 import Community from "./api/routes/Community.js";
+const app = express();
+const port = 4000;
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
