@@ -52,20 +52,59 @@ class AuthService {
         return newUser;
     }
 
+    // static async login(userData) {
+    //     const { email, password, chosenName } = userData;
+    //     let model;
+    //     const isAdminEmail = ["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email);
+
+    //     if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
+    //         model = prisma.User;
+    //     } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
+    //         model = prisma.User;
+    //     } else {
+    //         throw createError.NotFound('Email format not recognized');
+    //     }
+
+    //     const user = await model.findUnique({
+    //         where: { email: email },
+    //     });
+
+    //     if (!user) {
+    //         throw createError.NotFound('User not registered');
+    //     }
+
+    //     const checkPassword = await bcrypt.compare(password, user.password);
+    //     if (!checkPassword) {
+    //         throw createError.Unauthorized('Email address or password not valid');
+    //     }
+
+    //     if (chosenName) {
+    //         await AuthService.assignRandomName(user.id, chosenName);
+    //     } else {
+    //         throw createError.BadRequest('Name must be provided');
+    //     }
+
+    //     await model.update({
+    //         where: { email: email },
+    //         data: { log_status: true },
+    //     });
+
+    //     const { password: _, ...userWithoutPassword } = user;
+
+    //     return userWithoutPassword;
+    // }
+
     static async login(userData) {
-
         const { email, password, chosenName } = userData;
-        let model;
+        let isAdmin = false;
 
-        if (email.endsWith("@admin.uaic.ro")) {
-            model = prisma.Admin;
+        if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
+            isAdmin = true;
         } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
-            model = prisma.User;
-        } else {
-            throw createError.NotFound('Email format not recognized');
-        }
+            isAdmin = false;
+        } else { throw createError.NotFound('Email format not recognized'); }
 
-        const user = await model.findUnique({
+        const user = await prisma.User.findUnique({
             where: { email: email },
         });
 
@@ -73,18 +112,22 @@ class AuthService {
             throw createError.NotFound('User not registered');
         }
 
-        const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) {
-            throw createError.Unauthorized('Email address or password not valid');
+        let checkPassword;
+        if (isAdmin) {
+            checkPassword = password === user.password;
+        } else {
+            checkPassword = await bcrypt.compare(password, user.password);
         }
 
-        if (chosenName) {
+        if (isAdmin && chosenName) {
+            throw createError.BadRequest('Admins cannot use random names');
+        } else if (!isAdmin && chosenName) {
             await AuthService.assignRandomName(user.id, chosenName);
-        } else {
+        } else if(!isAdmin && chosenName == null){
             throw createError.BadRequest('Name must be provided');
         }
 
-        await model.update({
+        await prisma.User.update({
             where: { email: email },
             data: { log_status: true },
         });
@@ -146,17 +189,15 @@ class AuthService {
     // just for testing, not the actual function
     static async logout(userData) {
         const { email } = userData;
+        let isAdmin = false;
 
-        let model;
-        if (email.endsWith("@admin.uaic.ro")) {
-            model = prisma.Admin;
-        } else if (email.endsWith("@profesor.uaic.ro") || email.endsWith("@student.uaic.ro")) {
-            model = prisma.User;
-        } else {
-            throw createError.NotFound('Email format not recognized');
-        }
+        if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
+            isAdmin = true;
+        } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
+            isAdmin = false;
+        } else { throw createError.NotFound('Email format not recognized'); }
 
-        const user = await model.findUnique({
+        const user = await prisma.User.findUnique({
             where: { email: email },
         });
 
@@ -164,7 +205,7 @@ class AuthService {
             throw new Error('User not found');
         }
 
-        await model.update({
+        await prisma.User.update({
             where: { email: email },
             data: { log_status: false, random_name: null },
         });
