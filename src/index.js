@@ -1,5 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import swaggerSpec from "./api/utils/swagger.js"
+import swaggerUi from "swagger-ui-express";
+
 // import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -11,6 +14,8 @@ import UserAuth from './api/routes/Auth.js';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/user", User);
 app.use("/community", Community);
