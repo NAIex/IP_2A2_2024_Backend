@@ -8,6 +8,7 @@ const port = 4000;
 import User from "./api/routes/User.js";
 import Community from "./api/routes/Community.js";
 import UserAuth from './api/routes/Auth.js';
+import BannedUsers from './api/routes/BannedUsers.js';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use("/user", User);
 app.use("/community", Community);
 app.use('/', UserAuth);
+app.use('/ban', BannedUsers);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

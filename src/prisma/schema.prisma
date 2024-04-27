@@ -7,14 +7,6 @@ datasource db {
   url      = "postgresql://backend_dev:i am become death@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
 }
 
-model Admin {
-  id         Int     @id @default(autoincrement())
-  email      String  @unique
-  password   String
-  user_type  String  @default("admin")
-  log_status Boolean @default(false)
-}
-
 model User {
   id            Int       @id @default(autoincrement())
   email         String    @unique
@@ -29,7 +21,16 @@ model User {
 }
 
 model Community {
-  id            Int       @id @default(autoincrement())
-  name          String    
-  description   String?    
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  author_id   Int
+}
+
+model CommunityUser {
+  id           Int @id @default(autoincrement())
+  user_id      Int
+  community_id Int
+
+  @@unique([user_id, community_id])
 }
