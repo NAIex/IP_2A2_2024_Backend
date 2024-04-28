@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  password      String    @db.VarChar(60)
-  user_type     String    @default("user")
-  log_status    Boolean   @default(false)
-  ban_status    Boolean?  @default(false)
-  unbanned_date DateTime?
-  mute_status   Boolean   @default(false)
-  unmute_date   DateTime?
-  random_name   String?   @db.VarChar(50)
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  password       String    @db.VarChar(60)
+  user_type      String    @default("user")
+  log_status     Boolean   @default(false)
+  ban_status     Boolean?  @default(false)
+  unbanned_date  DateTime?
+  mute_status    Boolean   @default(false)
+  unmute_date    DateTime?
+  random_name    String?   @db.VarChar(50)
+  warnings_count Int
 }
 
 model Community {
