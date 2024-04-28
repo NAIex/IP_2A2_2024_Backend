@@ -52,21 +52,6 @@ class AuthService {
         return newUser;
     }
 
-    // static async verifyUser(email, password) {
-    //     const user = User.find(user => user.email === email);
-    //     if (!user) return null;
-    //     const valid = await bcrypt.compare(password, user.password);
-    //     return valid ? user : null;
-    // }
-
-    // static generateToken(user) {
-    //     return jwt.sign(
-    //         { userId: user.id, email: user.email },
-    //         process.env.JWT_TOKEN,
-    //         { expiresIn: '1h' }
-    //     );
-    // }
-
     static async login(userData) {
         const { email, password, chosenName } = userData;
         let isAdmin = false;
