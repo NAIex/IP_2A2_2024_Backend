@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express from "express";
 import bodyParser from "body-parser";
-// import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 4000;
@@ -19,6 +19,3 @@ app.use('/', UserAuth);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-// app.use(express.json());
-// app.use(cookieParser());

@@ -9,41 +9,58 @@ class authController {
                 status: true,
                 message: 'User created successfully',
                 data: user
-            })
-        }
-        catch (e) {
+            });
+        } catch (e) {
+            next(e);
             console.log(e);
             res.send(e);
         }
-    }
+    };
 
     static login = async (req, res, next) => {
         try {
-            const data = await auth.login(req.body)
+            const data = await auth.login(req.body);
             res.status(200).json({
                 status: true,
                 message: "Account login successful",
                 data
-            })
+            });
         } catch (e) {
+            next(e);
             console.log(e);
             res.send(e);
         }
-    }
+    };
+
+    static generateRandomName = async (req, res, next) => {
+        try {
+            const data = await auth.generateRandomName();
+            res.status(200).json({
+                status: true,
+                message: "Random names generated successfully",
+                data
+            });
+        } catch (e) {
+            next(e);
+            console.log(e);
+            res.send(e);
+        }
+    };
 
     static logout = async (req, res, next) => {
         try {
-            const data = await auth.logout(req.body)
+            const data = await auth.logout(req.body);
             res.status(200).json({
                 status: true,
                 message: "Account logout successful",
                 data
-            })
+            });
         } catch (e) {
+            next(e);
             console.log(e);
             res.send(e);
         }
-    }
+    };
 
     static all = async (req, res, next) => {
         try {
@@ -52,12 +69,13 @@ class authController {
                 status: true,
                 message: 'All users',
                 data: users
-            })
+            });
+        } catch (e) {
+            next(e);
+            console.log(e);
+            res.send(e);
         }
-        catch (e) {
-            next(createError(e.statusCode, e.message))
-        }
-    }
+    };
 }
 
-export default authController
+export default authController;
