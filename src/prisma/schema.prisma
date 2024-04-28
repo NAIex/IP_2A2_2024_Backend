@@ -8,27 +8,30 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  password      String    @db.VarChar(60)
-  user_type     String    @default("user")
-  log_status    Boolean   @default(false)
-  ban_status    Boolean?  @default(false)
-  unbanned_date DateTime?
-  mute_status   Boolean   @default(false)
-  unmute_date   DateTime?
-  random_name   String?   @db.VarChar(50)
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  password        String    @db.VarChar(60)
+  user_type       String    @default("user")
+  log_status      Boolean   @default(false)
+  ban_status      Boolean?  @default(false)
+  unbanned_date   DateTime?
+  mute_status     Boolean   @default(false)
+  unmute_date     DateTime?
+  random_name     String?   @db.VarChar(50)
+  warnings_count  Int?      @default(0)
 }
 
 model Community {
-  id            Int       @id @default(autoincrement())
-  name          String    
-  description   String?    
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  author_id   Int
 }
 
 model CommunityUser {
-  id            Int       @id @default(autoincrement())
-  user_id       Int       
-  community_id  Int   
-  @@unique([user_id, community_id])    
-} 
+  id           Int @id @default(autoincrement())
+  user_id      Int
+  community_id Int
+
+  @@unique([user_id, community_id])
+}

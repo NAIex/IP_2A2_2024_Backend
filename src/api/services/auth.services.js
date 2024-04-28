@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
-import jwt from "../utils/jwt.js";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+// import jwt from "../utils/jwt.js";
 import createError from "http-errors";
-import { faker } from "@faker-js/faker";
 import prisma from "../../prisma/index.js";
 import { promises as fsPromises } from 'fs';
 
@@ -52,46 +52,19 @@ class AuthService {
         return newUser;
     }
 
-    // static async login(userData) {
-    //     const { email, password, chosenName } = userData;
-    //     let model;
-    //     const isAdminEmail = ["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email);
+    // static async verifyUser(email, password) {
+    //     const user = User.find(user => user.email === email);
+    //     if (!user) return null;
+    //     const valid = await bcrypt.compare(password, user.password);
+    //     return valid ? user : null;
+    // }
 
-    //     if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
-    //         model = prisma.User;
-    //     } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
-    //         model = prisma.User;
-    //     } else {
-    //         throw createError.NotFound('Email format not recognized');
-    //     }
-
-    //     const user = await model.findUnique({
-    //         where: { email: email },
-    //     });
-
-    //     if (!user) {
-    //         throw createError.NotFound('User not registered');
-    //     }
-
-    //     const checkPassword = await bcrypt.compare(password, user.password);
-    //     if (!checkPassword) {
-    //         throw createError.Unauthorized('Email address or password not valid');
-    //     }
-
-    //     if (chosenName) {
-    //         await AuthService.assignRandomName(user.id, chosenName);
-    //     } else {
-    //         throw createError.BadRequest('Name must be provided');
-    //     }
-
-    //     await model.update({
-    //         where: { email: email },
-    //         data: { log_status: true },
-    //     });
-
-    //     const { password: _, ...userWithoutPassword } = user;
-
-    //     return userWithoutPassword;
+    // static generateToken(user) {
+    //     return jwt.sign(
+    //         { userId: user.id, email: user.email },
+    //         process.env.JWT_TOKEN,
+    //         { expiresIn: '1h' }
+    //     );
     // }
 
     static async login(userData) {
@@ -214,7 +187,7 @@ class AuthService {
     }
 
     static async all() {
-        const allUsers = await prisma.users.findMany();
+        const allUsers = await prisma.User.findMany();
         return allUsers;
     }
 }
