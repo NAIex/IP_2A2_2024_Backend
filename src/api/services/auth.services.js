@@ -23,7 +23,7 @@ class AuthService {
             const domainCheck = /^.*(@student\.uaic\.ro)|(@info\.uaic\.ro)|(@uaic\.ro)$/;
 
             if(!domainCheck.test(email)) {
-                throw createError.BadRequest('Email domain has to follow one of these formats:\nfor students - @student.uaic.ro\nfor professors - @info.uaic.ro or @uaic.ro');
+                throw createError.BadRequest('Email domain has to follow one of these formats: for students - @student.uaic.ro/for professors - @info.uaic.ro or @uaic.ro');
             }
 
             throw createError.BadRequest('Invalid email name or email does not exist');
@@ -57,7 +57,7 @@ class AuthService {
             if (!/.{10,20}/.test(password)) {
                 passwordErrors.push('Password must be between 10 and 20 characters long');
             }
-            throw createError.BadRequest(`\n${passwordErrors.join('\n')}`);
+            throw createError.BadRequest(`${passwordErrors.join('/')}`);
         } 
 
         const user = await prisma.User.findUnique({
