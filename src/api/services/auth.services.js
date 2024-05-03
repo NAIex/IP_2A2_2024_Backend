@@ -43,21 +43,21 @@ class AuthService {
             const passwordErrors = [];
 
             if (!/(?=.*[a-z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one lowercase letter');
+                passwordErrors.push('contain at least one lowercase letter');
             }
             if (!/(?=.*[A-Z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one uppercase letter');
+                passwordErrors.push('contain at least one uppercase letter');
             }
             if (!/(?=.*\d)/.test(password)) {
-                passwordErrors.push('Password must contain at least one digit');
+                passwordErrors.push('contain at least one digit');
             }
             if (!/(?=.*[\W_])/.test(password)) {
-                passwordErrors.push('Password must contain at least one special character');
+                passwordErrors.push('contain at least one special character');
             }
             if (!/.{10,20}/.test(password)) {
-                passwordErrors.push('Password must be between 10 and 20 characters long');
+                passwordErrors.push('be between 10 and 20 characters long');
             }
-            throw createError.BadRequest(`${passwordErrors.join('/')}`);
+            throw createError.BadRequest('Invalid password. Password must: ' + `${passwordErrors.join(', ')}` + '.');
         } 
 
         const user = await prisma.User.findUnique({
@@ -72,7 +72,8 @@ class AuthService {
             data: {
                 email: userData.email,
                 password: hashedPassword,
-                user_type: userType
+                user_type: userType,
+                warnings_count: 0
             },
         })
     
