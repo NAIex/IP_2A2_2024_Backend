@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import path from 'path';
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 import { promises as fsPromises } from 'fs';
@@ -80,6 +79,7 @@ class AuthService {
     }
 
     static async login(userData) {
+        
         const { email, password, chosenName } = userData;
         let isAdmin = false;
 
