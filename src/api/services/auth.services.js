@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-// import jwt from "../utils/jwt.js";
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 import { promises as fsPromises } from 'fs';
@@ -81,14 +80,17 @@ class AuthService {
     }
 
     static async login(userData) {
+        
         const { email, password, chosenName } = userData;
         let isAdmin = false;
 
-        if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
+        if (["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email)) {
             isAdmin = true;
         } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
             isAdmin = false;
-        } else { throw createError.NotFound('Email format not recognized'); }
+        } else {
+            throw createError.NotFound('Email format not recognized');
+        }
 
         const user = await prisma.User.findUnique({
             where: { email: email },
@@ -98,29 +100,27 @@ class AuthService {
             throw createError.NotFound('User not registered');
         }
 
-        let checkPassword;
-        if (isAdmin) {
-            checkPassword = password === user.password;
-        } else {
-            checkPassword = await bcrypt.compare(password, user.password);
+        let checkPassword = isAdmin ? (password === user.password) : await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            throw createError.Unauthorized('Invalid password');
         }
 
         if (isAdmin && chosenName) {
             throw createError.BadRequest('Admins cannot use random names');
         } else if (!isAdmin && chosenName) {
             await AuthService.assignRandomName(user.id, chosenName);
-        } else if(!isAdmin && chosenName == null){
+        } else if (!isAdmin && chosenName == null) {
             throw createError.BadRequest('Name must be provided');
         }
 
-        await prisma.User.update({
-            where: { email: email },
-            data: { log_status: true },
-        });
+        const token = jwt.sign(
+            { userId: user.id, email: user.email, isAdmin: isAdmin },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
 
-        const { password: _, ...userWithoutPassword } = user;
-
-        return userWithoutPassword;
+        return { token, user: { ...user, password: undefined } };
     }
 
     static async assignRandomName(userId, chosenName) {
@@ -147,7 +147,8 @@ class AuthService {
     }
 
     static async generateRandomName() {
-        const data = await fsPromises.readFile(`/home/helio/Desktop/IP_2A2_2024_Backend/src/api/services/cuteNames.json`, 'utf8');
+
+        const data = await fsPromises.readFile('./src/api/services/cuteNames.json', 'utf8');
         const namesJson = JSON.parse(data);
 
         const namesList = [];
@@ -170,33 +171,6 @@ class AuthService {
         }
 
         return namesList;
-    }
-
-    // just for testing, not the actual function
-    static async logout(userData) {
-        const { email } = userData;
-        let isAdmin = false;
-
-        if (email === ("aot.admin1@gmail.com") || email === ("aot.admin2@gmail.com") || email === ("aot.admin3@gmail.com")) {
-            isAdmin = true;
-        } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
-            isAdmin = false;
-        } else { throw createError.NotFound('Email format not recognized'); }
-
-        const user = await prisma.User.findUnique({
-            where: { email: email },
-        });
-
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        await prisma.User.update({
-            where: { email: email },
-            data: { log_status: false, random_name: null },
-        });
-
-        return { message: "Successfully logged out" };
     }
 
     static async all() {

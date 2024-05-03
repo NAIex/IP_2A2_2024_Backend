@@ -1,7 +1,9 @@
 import token from '../utils/jwt.js'
+import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 
 const auth = async (req, res, next) => {
+    
     if (!req.headers.authorization) {
         return next(createError.Unauthorized('Access token is required'))
     }
