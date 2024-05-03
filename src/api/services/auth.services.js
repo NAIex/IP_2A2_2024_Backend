@@ -22,7 +22,7 @@ class AuthService {
             const domainCheck = /^.*(@student\.uaic\.ro)|(@info\.uaic\.ro)|(@uaic\.ro)$/;
 
             if(!domainCheck.test(email)) {
-                throw createError.BadRequest('Email domain has to follow one of these formats:\nfor students - @student.uaic.ro\nfor professors - @info.uaic.ro or @uaic.ro');
+                throw createError.BadRequest('Email domain has to follow one of these formats: for students - @student.uaic.ro/for professors - @info.uaic.ro or @uaic.ro');
             }
 
             throw createError.BadRequest('Invalid email name or email does not exist');
@@ -42,21 +42,21 @@ class AuthService {
             const passwordErrors = [];
 
             if (!/(?=.*[a-z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one lowercase letter');
+                passwordErrors.push('contain at least one lowercase letter');
             }
             if (!/(?=.*[A-Z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one uppercase letter');
+                passwordErrors.push('contain at least one uppercase letter');
             }
             if (!/(?=.*\d)/.test(password)) {
-                passwordErrors.push('Password must contain at least one digit');
+                passwordErrors.push('contain at least one digit');
             }
             if (!/(?=.*[\W_])/.test(password)) {
-                passwordErrors.push('Password must contain at least one special character');
+                passwordErrors.push('contain at least one special character');
             }
             if (!/.{10,20}/.test(password)) {
-                passwordErrors.push('Password must be between 10 and 20 characters long');
+                passwordErrors.push('be between 10 and 20 characters long');
             }
-            throw createError.BadRequest(`\n${passwordErrors.join('\n')}`);
+            throw createError.BadRequest('Invalid password. Password must: ' + `${passwordErrors.join(', ')}` + '.');
         } 
 
         const user = await prisma.User.findUnique({
@@ -71,7 +71,8 @@ class AuthService {
             data: {
                 email: userData.email,
                 password: hashedPassword,
-                user_type: userType
+                user_type: userType,
+                warnings_count: 0
             },
         })
     
