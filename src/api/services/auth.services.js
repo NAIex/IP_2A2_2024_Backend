@@ -86,7 +86,7 @@ class AuthService {
 
         if (["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email)) {
             isAdmin = true;
-        } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
+        } else if (email && email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
             isAdmin = false;
         } else {
             throw createError.NotFound('Email format not recognized');
