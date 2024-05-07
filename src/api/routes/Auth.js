@@ -49,6 +49,8 @@ router.post('/register', user.register);
  *                 type: string
  *               password:
  *                 type: string
+ *               chosenName:
+ *                 type: string
  *     responses:
  *       '200':
  *         description: Account login successful
