@@ -36,7 +36,7 @@ model Community {
 }
 
 model WordBlacklist {
-  id        	Int       	@id @default(autoincrement())
-  word      	String   	  @unique
-  dateAdded 	DateTime?  	@default(now())
+  id        Int       @id @default(autoincrement())
+  word      String    @unique
+  dateAdded DateTime? @default(now())
 }
