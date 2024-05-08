@@ -1,37 +1,29 @@
 import jwt from 'jsonwebtoken';
 import createError from 'http-errors';
 
-const secretKey = process.env.JWT_SECRET || 'your_default_secret';
+const secretKey = process.env.JWT_SECRET;
 
-const signAccessToken = (userId, email, isAdmin) => {
-    return new Promise((resolve, reject) => {
+// Asynchronously sign an access token
+export async function signAccessToken(userId, email, isAdmin) {
+    try {
         const payload = { userId, email, isAdmin };
-        const options = { expiresIn: '1m' };
+        const token = jwt.sign(payload, secretKey, { expiresIn: '1m' });
+        return token;
+    } catch (error) {
+        throw createError.InternalServerError('Unable to sign token');
+    }
+}
 
-        jwt.sign(payload, secretKey, options, (err, token) => {
-            if (err) {
-                reject(createError.InternalServerError('Failed to create the access token'));
-            } else {
-                resolve(token);
-            }
-        });
-    });
-};
-
-const verifyAccessToken = (token) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, secretKey, (err, decoded) => {
-            if (err) {
-                const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;
-                reject(createError.Unauthorized(message));
-            } else {
-                resolve(decoded);
-            }
-        });
-    });
-};
-
-export default {
-    signAccessToken,
-    verifyAccessToken
-};
+// Asynchronously verify an access token
+export async function verifyAccessToken(token) {
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        return decoded;
+    } catch (error) {
+        if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+            throw createError.Unauthorized(error.message);
+        } else {
+            throw createError.InternalServerError('Token verification failed');
+        }
+    }
+}

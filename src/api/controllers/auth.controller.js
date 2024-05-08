@@ -32,9 +32,9 @@ class authController {
         }
     };
 
-    static generateRandomName = async (req, res, next) => {
+    static generateRandomNames = async (req, res, next) => {
         try {
-            const data = await AuthService.generateRandomName();
+            const data = await AuthService.generateRandomNames();
             res.status(200).json({
                 status: true,
                 message: "Random names generated successfully",

@@ -1,8 +1,10 @@
 import bcrypt from 'bcryptjs';
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
-import jwtUtils from '../utils/jwt.js';
+import { signAccessToken, verifyAccessToken } from '../utils/jwt.js';
 import { promises as fsPromises } from 'fs';
+
+let availableNames = [];
 
 class AuthService {
 
@@ -82,7 +84,12 @@ class AuthService {
     static async login(userData) {
         
         const { email, password, chosenName } = userData;
-        let isAdmin = false;
+
+        if (!availableNames.includes(chosenName)) {
+            throw createError.BadRequest('Name is not from the list of generated names');
+        }
+
+        var isAdmin = false;
 
         if (["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email)) {
             isAdmin = true;
@@ -114,7 +121,7 @@ class AuthService {
             throw createError.BadRequest('Name must be provided');
         }
 
-        const token = await jwtUtils.signAccessToken(user.id, user.email, isAdmin);
+        const token = await signAccessToken(user.id, user.email, isAdmin);
 
         return { token, user: { ...user, password: undefined } };
     }
@@ -142,11 +149,10 @@ class AuthService {
         return array[randomIndex];
     }
 
-    static async generateRandomName() {
+    static async generateRandomNames() {
 
         const data = await fsPromises.readFile('./src/api/services/cuteNames.json', 'utf8');
         const namesJson = JSON.parse(data);
-
         const namesList = [];
 
         for (let i = 0; i < 15; i++) {
@@ -162,10 +168,10 @@ class AuthService {
             }
 
             name = name.replace(/The/g, '');
-
             namesList.push(name);
         }
 
+        availableNames = namesList;
         return namesList;
     }
 
