@@ -18,6 +18,16 @@ model User {
   unmute_date    DateTime?
   random_name    String?   @db.VarChar(50)
   warnings_count Int
+  notifications  Notification[]
+}
+
+model Notification {
+  notification_id  Int       @id @default(autoincrement())
+  user             User      @relation(fields: [user_ID], references: [id])
+  user_ID          Int
+  type             String    @db.VarChar(30)
+  time_sent        DateTime
+  opened           Boolean?  @default(false) 
 }
 
 model CommunityUser {
