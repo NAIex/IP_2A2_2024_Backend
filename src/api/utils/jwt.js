@@ -3,7 +3,6 @@ import createError from 'http-errors';
 
 const secretKey = process.env.JWT_SECRET;
 
-// Asynchronously sign an access token
 export async function signAccessToken(userId, email, isAdmin) {
     try {
         const payload = { userId, email, isAdmin };
@@ -14,7 +13,6 @@ export async function signAccessToken(userId, email, isAdmin) {
     }
 }
 
-// Asynchronously verify an access token
 export async function verifyAccessToken(token) {
     try {
         const decoded = jwt.verify(token, secretKey);

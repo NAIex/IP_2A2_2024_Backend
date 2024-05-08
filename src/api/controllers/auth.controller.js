@@ -34,11 +34,11 @@ class authController {
 
     static generateRandomNames = async (req, res, next) => {
         try {
-            const data = await AuthService.generateRandomNames();
+            const names = await AuthService.generateRandomNames();
             res.status(200).json({
                 status: true,
                 message: "Random names generated successfully",
-                data
+                data: names
             });
         } catch (e) {
             next(e);
@@ -49,12 +49,12 @@ class authController {
 
     static logout = async (req, res, next) => {
         try {
-            const data = await AuthService.logout(req.body);
-            res.status(200).json({
-                status: true,
-                message: "Account logout successful",
-                data
-            });
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                throw new Error('Token is required for logout');
+            }
+            await AuthService.logout(token);
+            res.status(204).send();
         } catch (e) {
             next(e);
             console.log(e);
