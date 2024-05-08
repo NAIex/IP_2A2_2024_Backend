@@ -1,5 +1,3 @@
-import token from '../utils/jwt.js'
-import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 
 const auth = async (req, res, next) => {
@@ -17,6 +15,7 @@ const auth = async (req, res, next) => {
     }).catch (e => {
         next(createError.Unauthorized(e.message))
     })
+    next()
 }
 
 export default auth

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
+import jwtUtils from '../utils/jwt.js';
 import { promises as fsPromises } from 'fs';
 
 class AuthService {
@@ -114,11 +114,7 @@ class AuthService {
             throw createError.BadRequest('Name must be provided');
         }
 
-        const token = jwt.sign(
-            { userId: user.id, email: user.email, isAdmin: isAdmin },
-            process.env.JWT_SECRET,
-            { expiresIn: '1m' }
-        );
+        const token = await jwtUtils.signAccessToken(user.id, user.email, isAdmin);
 
         return { token, user: { ...user, password: undefined } };
     }

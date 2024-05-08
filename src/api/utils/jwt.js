@@ -1,30 +1,37 @@
-import jwt from 'jsonwebtoken'
-import createError from 'http-errors'
+import jwt from 'jsonwebtoken';
+import createError from 'http-errors';
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
-const token = {
-    signAccessToken(payload){
-        return new Promise((resolve, reject) => {
-            jwt.sign({ payload }, accessTokenSecret, {
-            }, (err, token) => {
-                if (err) {
-                reject(createError.InternalServerError())
-                }
-                resolve(token)
-            })
-        })
-    },
-    verifyAccessToken(token){
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, accessTokenSecret, (err, payload) => {
-                if (err) {
-                    const message = err.name == 'JsonWebTokenError' ? 'Unauthorized' : err.message
-                    return reject(createError.Unauthorized(message))
-                }
-                resolve(payload)
-            })
-        })
-    }
-}
+const secretKey = process.env.JWT_SECRET || 'your_default_secret';
 
-export default token
+const signAccessToken = (userId, email, isAdmin) => {
+    return new Promise((resolve, reject) => {
+        const payload = { userId, email, isAdmin };
+        const options = { expiresIn: '1m' };
+
+        jwt.sign(payload, secretKey, options, (err, token) => {
+            if (err) {
+                reject(createError.InternalServerError('Failed to create the access token'));
+            } else {
+                resolve(token);
+            }
+        });
+    });
+};
+
+const verifyAccessToken = (token) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secretKey, (err, decoded) => {
+            if (err) {
+                const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;
+                reject(createError.Unauthorized(message));
+            } else {
+                resolve(decoded);
+            }
+        });
+    });
+};
+
+export default {
+    signAccessToken,
+    verifyAccessToken
+};
