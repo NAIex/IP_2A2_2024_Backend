@@ -86,10 +86,6 @@ class AuthService {
         
         const { email, password, chosenName } = userData;
 
-        if (!availableNames.includes(chosenName)) {
-            throw createError.BadRequest('Name is not from the list of generated names');
-        }
-
         var isAdmin = false;
 
         if (["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email)) {
@@ -118,6 +114,9 @@ class AuthService {
             throw createError.BadRequest('Admins cannot use random names');
         } else if (!isAdmin && chosenName) {
             await AuthService.assignRandomName(user.id, chosenName);
+            if (!availableNames.includes(chosenName)) {
+                throw createError.BadRequest('Name is not from the list of generated names');
+            }
         } else if (!isAdmin && chosenName == null) {
             throw createError.BadRequest('Name must be provided');
         }
