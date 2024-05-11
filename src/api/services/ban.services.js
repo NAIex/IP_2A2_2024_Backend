@@ -37,7 +37,7 @@ class BanService {
 
         if (!user) throw createError.NotFound('User not registered');
 
-        if(user.ban_status == false) return { message: "User is not banned" };
+        if(user.ban_status == false) throw createError.NotAcceptable('User is not banned');
 
         await model.update({
             where: { id: id },
@@ -48,7 +48,7 @@ class BanService {
             },
         });
 
-        return { message: "User unbanned succesfully" };
+        return user;
     }
 
     static async sendBanNotification(user_id) {
@@ -68,7 +68,7 @@ class BanService {
 
         if(user.user_type == "admin") throw createError.BadRequest('Admins cannot be banned');
 
-        if(user.ban_status == true) return { message: "User already banned" };
+        if(user.ban_status == true) throw createError.NotAcceptable('User is already banned');
 
         const localTimeOffset = new Date().getTimezoneOffset();
         
@@ -82,7 +82,7 @@ class BanService {
             },
         });
 
-        return { message: "User banned succesfully. Message sent: " + await this.sendBanNotification(user.id)};
+        return user;
     }
 }
 

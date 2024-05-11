@@ -7,7 +7,7 @@ class banController {
             const list = await ban.viewBannedUsers();
             res.status(200).json({
                 status: true,
-                message: 'Banned users: ',
+                message: 'List of all the banned users',
                 data: list
             })
         }
@@ -22,7 +22,7 @@ class banController {
             const list = await ban.viewBanCandidates();
             res.status(200).json({
                 status: true,
-                message: 'Ban candidates: ',
+                message: 'List of all the ban candidates',
                 data: list
             })
         }
@@ -34,10 +34,11 @@ class banController {
 
     static unbanUser = async (req, res, next) => {
         try {
-            const data = await ban.unbanUser(req.body)
+            const user = await ban.unbanUser(req.body)
             res.status(200).json({
                 status: true,
-                data
+                message: 'User unbanned succesfully',
+                data: user
             })
         } catch (e) {
             console.log(e);
@@ -47,10 +48,11 @@ class banController {
 
     static banUser = async (req, res, next) => {
         try {
-            const data = await ban.banUser(req.body)
+            const user = await ban.banUser(req.body)
             res.status(200).json({
                 status: true,
-                data
+                message: 'User banned succesfully',
+                data: user
             })
         } catch (e) {
             console.log(e);
