@@ -1,26 +1,30 @@
+import 'dotenv/config';
 import express from "express";
 import bodyParser from "body-parser";
-// import cookieParser from 'cookie-parser';
+
+import swaggerUi from 'swagger-ui-express';
+import specs from "./api/utils/swagger.js";
+
+import User from "./api/routes/User.js";
+import UserAuth from './api/routes/Auth.js';
+import WordBlacklist from './api/routes/WordBlacklist.js';
+import Community from "./api/routes/Community.js";
+import MutedUsers from './api/routes/MutedUsers.js';
 
 const app = express();
 const port = 4000;
 
-import User from "./api/routes/User.js";
-import Community from "./api/routes/Community.js";
-import UserAuth from './api/routes/Auth.js';
-import BannedUsers from './api/routes/BannedUsers.js';
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/user", User);
+app.use("/", WordBlacklist);
 app.use("/community", Community);
 app.use('/', UserAuth);
-app.use('/ban', BannedUsers);
+app.use('/mute', MutedUsers);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-// app.use(express.json());
-// app.use(cookieParser());
