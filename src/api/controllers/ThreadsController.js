@@ -4,6 +4,28 @@ import { getUserId } from "./UserController.js";
 
 export const addThreadToCommunity = async (req, res) => {
     const { communityId, name, description, type } = req.body;
+
+    if (!communityId) {
+        res.status(400).send("Missing required data: communityId");
+        return;
+    }
+
+    if (!name) {
+        res.status(400).send("Missing required data: name");
+        return;
+    }
+
+    if (!description) {
+        res.status(400).send("Missing required data: description");
+        return;
+    }
+
+    if (!type) {
+        res.status(400).send("Missing required data: type");
+        return;
+    }
+
+
     try {
         const userId = getUserId(req);
         
