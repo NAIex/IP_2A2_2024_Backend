@@ -57,7 +57,7 @@ class MuteService {
         
         const creationDate = new Date(new Date().getTime() - (localTimeOffset * 60 * 1000));
 
-        let newNotification = await prisma.Notification.create({
+        const newNotification = await prisma.Notification.create({
             data: {
                 user_ID: user_id,
                 type: notification_type,
