@@ -71,7 +71,35 @@ router.post('/login', user.login);
  *         description: Logout successful
  */
 router.post('/logout', user.logout);
-router.post('/generateRandomName', user.generateRandomName);
+/**
+ * @swagger
+ * /generateRandomName:
+ *   get:
+ *     summary: Generate random names
+ *     description: Generates a list of 15 names from which the user can choose when they log in.
+ *     requestBody:
+ *       required: 
+ *       content:
+ *         application/json:
+ *     responses:
+ *       '200':
+ *         description: Random names generated successfully
+ */
+router.get('/generateRandomName', user.generateRandomName);
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Show all users
+ *     description: Shows all the users and admins registered on the platform, but only if you are logged in.
+ *     requestBody:
+ *       required: 
+ *       content:
+ *         application/json:
+ *     responses:
+ *       '200':
+ *         description: All users
+ */
 router.get('/', auth, user.all);
 
 export default router;
