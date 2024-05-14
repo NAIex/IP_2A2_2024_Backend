@@ -7,7 +7,7 @@ class muteController {
             const list = await mute.viewMutedUsers();
             res.status(200).json({
                 status: true,
-                message: 'Muted users: ',
+                message: 'List of all the muted users',
                 data: list
             })
         }
@@ -22,7 +22,7 @@ class muteController {
             const list = await mute.viewMuteCandidates();
             res.status(200).json({
                 status: true,
-                message: 'Mute candidates: ',
+                message: 'List of all the mute candidates',
                 data: list
             })
         }
@@ -34,10 +34,11 @@ class muteController {
 
     static unmuteUser = async (req, res, next) => {
         try {
-            const data = await mute.unmuteUser(req.body)
+            const user = await mute.unmuteUser(req.body)
             res.status(200).json({
                 status: true,
-                data
+                message: 'User unmuted succesfully',
+                data: user
             })
         } catch (e) {
             console.log(e);
@@ -47,10 +48,11 @@ class muteController {
 
     static muteUser = async (req, res, next) => {
         try {
-            const data = await mute.muteUser(req.body)
+            const user = await mute.muteUser(req.body)
             res.status(200).json({
                 status: true,
-                data
+                message: 'User muted succesfully',
+                data: user
             })
         } catch (e) {
             console.log(e);

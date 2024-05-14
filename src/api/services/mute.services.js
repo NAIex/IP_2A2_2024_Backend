@@ -37,19 +37,20 @@ class MuteService {
 
         if (!user) throw createError.NotFound('User not registered');
 
-        if(user.mute_status == false) return { message: "User is not muted" };
+        if(user.mute_status == false) throw createError.NotAcceptable('User is not muted');
 
         await model.update({
             where: { id: id },
             data: { 
                 mute_status: false,
+                warnings_count: 0,
                 unmute_date: null 
             },
         });
 
         this.sendMuteNotification(user.id, "unmute");
 
-        return { message: "User unmuted succesfully" };
+        return user;
     }
 
     static async sendMuteNotification(user_id, notification_type) {
@@ -81,7 +82,7 @@ class MuteService {
 
         if(user.user_type == "admin") throw createError.BadRequest('Admins cannot be muted');
 
-        if(user.mute_status == true) return { message: "User already muted" };
+        if(user.mute_status == true) throw createError.NotAcceptable('User is already muted');
 
         const localTimeOffset = new Date().getTimezoneOffset();
         
@@ -98,7 +99,7 @@ class MuteService {
 
         this.sendMuteNotification(user.id, "mute");
 
-        return { message: "User muted succesfully." };
+        return user;
     }
 }
 
