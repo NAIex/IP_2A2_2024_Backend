@@ -6,7 +6,7 @@ import ban from "../controllers/BannedUsersController.js";
 const router = Router();
 /**
  * @swagger
- * /ban/viewBannedUsers:
+ * /ban:
  *   get:
  *     summary: View all banned users
  *     description: Shows a list of all the banned users on the platform.
@@ -14,11 +14,11 @@ const router = Router();
  *       '200':
  *         description: List of all the banned users
  */
-router.get('/viewBannedUsers', ban.viewBannedUsers);
+router.get('/', ban.viewBannedUsers);
 /**
  * @swagger
- * /ban/unbanUser:
- *   post:
+ * /ban:
+ *   patch:
  *     summary: Unban a user
  *     description: Changes a user's ban_status to false.
  *     requestBody:
@@ -38,11 +38,11 @@ router.get('/viewBannedUsers', ban.viewBannedUsers);
  *       '406':
  *         description: User is not banned
  */
-router.post('/unbanUser', ban.unbanUser);
+router.patch('/', ban.unbanUser);
 /**
  * @swagger
- * /ban/banUser:
- *   post:
+ * /ban:
+ *   put:
  *     summary: Ban a user
  *     description: Changes a user's ban_status to true and sets their unban_date.
  *     requestBody:
@@ -64,10 +64,10 @@ router.post('/unbanUser', ban.unbanUser);
  *       '406':
  *         description: User is already banned
  */
-router.post('/banUser', ban.banUser);
+router.put('/', ban.banUser);
 /**
  * @swagger
- * /ban/viewBanCandidates:
+ * /ban/candidates:
  *   get:
  *     summary: View all users that are ban candidates
  *     description: Shows a list of all the users that could be banned by an admin in the future.
@@ -75,6 +75,6 @@ router.post('/banUser', ban.banUser);
  *       '200':
  *         description: List of all the ban candidates
  */
-router.get('/viewBanCandidates', ban.viewBanCandidates);
+router.get('/candidates', ban.viewBanCandidates);
 
 export default router;

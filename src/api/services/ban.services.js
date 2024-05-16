@@ -37,7 +37,7 @@ class BanService {
 
         if (!user) throw createError.NotFound('User not registered');
 
-        if(user.ban_status == false) throw createError.NotAcceptable('User is not banned');
+        if(user.ban_status == false) throw createError.NotFound('User is not banned');
 
         await model.update({
             where: { id: id },
@@ -66,9 +66,9 @@ class BanService {
 
         if(!user) throw createError.NotFound('User not registered');
 
-        if(user.user_type == "admin") throw createError.BadRequest('Admins cannot be banned');
+        if(user.user_type == "admin") throw createError.NotFound('Admins cannot be banned');
 
-        if(user.ban_status == true) throw createError.NotAcceptable('User is already banned');
+        if(user.ban_status == true) throw createError.NotFound('User is already banned');
 
         const localTimeOffset = new Date().getTimezoneOffset();
         
