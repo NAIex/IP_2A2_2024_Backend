@@ -8,7 +8,7 @@ const router = Router();
 
 /**
  * @swagger
- * /register:
+ * /:
  *   post:
  *     summary: Register new user
  *     description: Creates a new user account.
@@ -31,11 +31,11 @@ const router = Router();
  *       '403':
  *         description: Email already registered
  */
-router.post('/register', user.register);
+router.post('/', user.register);
 /**
  * @swagger
- * /login:
- *   post:
+ * /:
+ *   put:
  *     summary: User login
  *     description: Logs in an existing user.
  *     requestBody:
@@ -59,21 +59,21 @@ router.post('/register', user.register);
  *       '404':
  *         description: User not found
  */
-router.post('/login', user.login);
+router.put('/', user.login);
 /**
  * @swagger
- * /logout:
- *   post:
+ * /:
+ *   patch:
  *     summary: User logout
  *     description: Logs out the current user.
  *     responses:
  *       '200':
  *         description: Logout successful
  */
-router.post('/logout', user.logout);
+router.patch('/logout', user.logout);
 /**
  * @swagger
- * /generateRandomName:
+ * /randomName:
  *   get:
  *     summary: Generate random names
  *     description: Generates a list of 15 names from which the user can choose when they log in.
@@ -85,7 +85,7 @@ router.post('/logout', user.logout);
  *       '200':
  *         description: Random names generated successfully
  */
-router.get('/generateRandomName', user.generateRandomName);
+router.get('/randomName', user.generateRandomName);
 /**
  * @swagger
  * /:

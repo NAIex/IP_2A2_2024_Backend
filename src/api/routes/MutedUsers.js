@@ -6,7 +6,7 @@ import mute from "../controllers/MutedUsersController.js";
 const router = Router();
 /**
  * @swagger
- * /mute/viewMutedUsers:
+ * /mute:
  *   get:
  *     summary: View all muted users
  *     description: Shows a list of all the muted users on the platform.
@@ -14,11 +14,11 @@ const router = Router();
  *       '200':
  *         description: List of all the muted users
  */
-router.get('/viewMutedUsers', mute.viewMutedUsers);
+router.get('/', mute.viewMutedUsers);
 /**
  * @swagger
- * /mute/unmuteUser:
- *   post:
+ * /mute:
+ *   patch:
  *     summary: Unmute a user
  *     description: Changes a user's mute_status to false.
  *     requestBody:
@@ -38,11 +38,11 @@ router.get('/viewMutedUsers', mute.viewMutedUsers);
  *       '406':
  *         description: User is not muted
  */
-router.post('/unmuteUser', mute.unmuteUser);
+router.patch('/', mute.unmuteUser);
 /**
  * @swagger
- * /mute/muteUser:
- *   post:
+ * /mute:
+ *   put:
  *     summary: Mute a user
  *     description: Changes a user's mute_status to true, sets their unmute_date and 
  *          increases their warning count by 1.
@@ -65,10 +65,10 @@ router.post('/unmuteUser', mute.unmuteUser);
  *       '406':
  *         description: User is already muted
  */
-router.post('/muteUser', mute.muteUser);
+router.put('/', mute.muteUser);
 /**
  * @swagger
- * /mute/viewMuteCandidates:
+ * /mute/candidates:
  *   get:
  *     summary: View all users that are mute candidates
  *     description: Shows a list of all the users that could be muted by an admin in the future.
@@ -76,6 +76,6 @@ router.post('/muteUser', mute.muteUser);
  *       '200':
  *         description: List of all the mute candidates
  */
-router.get('/viewMuteCandidates', mute.viewMuteCandidates);
+router.get('/candidates', mute.viewMuteCandidates);
 
 export default router;

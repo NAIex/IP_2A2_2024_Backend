@@ -37,7 +37,7 @@ class MuteService {
 
         if (!user) throw createError.NotFound('User not registered');
 
-        if(user.mute_status == false) throw createError.NotAcceptable('User is not muted');
+        if(user.mute_status == false) throw createError.NotFound('User is not muted');
 
         await model.update({
             where: { id: id },
@@ -80,9 +80,9 @@ class MuteService {
 
         if(!user) throw createError.NotFound('User not registered');
 
-        if(user.user_type == "admin") throw createError.BadRequest('Admins cannot be muted');
+        if(user.user_type == "admin") throw createError.NotFound('Admins cannot be muted');
 
-        if(user.mute_status == true) throw createError.NotAcceptable('User is already muted');
+        if(user.mute_status == true) throw createError.NotFound('User is already muted');
 
         const localTimeOffset = new Date().getTimezoneOffset();
         
