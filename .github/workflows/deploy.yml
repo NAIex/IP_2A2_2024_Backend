@@ -48,7 +48,7 @@ jobs:
           Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
           -----END RSA PRIVATE KEY-----
         source: "."
-        target: "/home/ec2-user/BE_test"
+        target: "/home/ec2-user/BE"
 
     - name: Executing remote command
       uses: appleboy/ssh-action@master
