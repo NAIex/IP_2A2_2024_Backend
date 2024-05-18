@@ -119,7 +119,7 @@ class AuthService {
     }
 
     static async generateRandomName() {
-        const data = await fsPromises.readFile(`/home/helio/Desktop/IP_2A2_2024_Backend/src/api/services/cuteNames.json`, 'utf8');
+        const data = await fsPromises.readFile(`../IP_2A2_2024_Backend/src/api/services/cuteNames.json`, 'utf8');
         const namesJson = JSON.parse(data);
 
         const namesList = [];
