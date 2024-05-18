@@ -8,8 +8,8 @@ import {
   getUserCommunity,
   addUserToCommunity,
   removeUserFromCommunity,
+  turnOffCommunity,
 } from "../controllers/CommunityController.js";
-
 
 const router = Router();
 
@@ -50,6 +50,16 @@ router.delete(
   body("communityId").notEmpty(),
   ErrorMiddleware,
   removeUserFromCommunity
+);
+
+router.patch(
+  "/turn-off",
+  body("userId").notEmpty(),
+  body("communityId").notEmpty(),
+  body("type").notEmpty(),
+  body("type").isIn(["archive", "disable"]),
+  ErrorMiddleware,
+  turnOffCommunity
 );
 
 export default router;
