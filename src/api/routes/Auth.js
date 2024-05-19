@@ -59,7 +59,7 @@ router.post('/register', user.register);
  *       '404':
  *         description: User not found
  */
-router.post('/login', user.login);
+router.put('/login', user.login);
 /**
  * @swagger
  * /logout:
@@ -71,7 +71,7 @@ router.post('/login', user.login);
  *         description: Logout successful
  */
 router.post('/logout', user.logout);
-router.post('/generateRandomNames', user.generateRandomNames);
+router.get('/generateRandomNames', user.generateRandomNames);
 router.get('/', auth, user.all);
 
 export default router;
