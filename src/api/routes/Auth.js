@@ -59,7 +59,7 @@ router.post('/register', user.register);
  *       '404':
  *         description: User not found
  */
-router.put('/login', user.login);
+router.post('/login', user.login);
 /**
  * @swagger
  * /logout:
