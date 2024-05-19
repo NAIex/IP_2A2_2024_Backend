@@ -1,18 +1,12 @@
 // import jwt from 'jsonwebtoken';
 // import createError from 'http-errors';
 
-// let secretKey;
-// try {
-//     secretKey = fs.readFileSync('path_to_your_private_key.pem', 'utf8');
-// } catch (error) {
-//     console.error('Error loading the private key:', error);
-//     throw createError.InternalServerError('Failed to load private key');
-// }
+// const secretKey = process.env.JWT_SECRET;
 
 // export async function signAccessToken(userId, email, isAdmin) {
 //     try {
 //         const payload = { userId, email, isAdmin };
-//         const token = jwt.sign(payload, secretKey, { expiresIn: '1m' , algorithm: 'RS256'});
+//         const token = jwt.sign(payload, secretKey, { expiresIn: '1m' });
 //         return token;
 //     } catch (error) {
 //         throw createError.InternalServerError('Unable to sign token');
@@ -38,9 +32,8 @@ import jwt from 'jsonwebtoken';
 import createError from 'http-errors';
 import dotenv from 'dotenv';
 
-dotenv.config(); // Ensures your .env variables are loaded into process.env
+dotenv.config();
 
-// Function to load a key from a file
 function loadKey(filePath) {
     try {
         return fs.readFileSync(path.resolve(filePath), 'utf8');
