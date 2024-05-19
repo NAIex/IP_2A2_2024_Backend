@@ -19,17 +19,6 @@ model User {
   random_name    String?        @db.VarChar(50)
   warnings_count Int
   Notification   Notification[]
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String         @db.VarChar(60)
-  user_type      String         @default("user")
-  ban_status     Boolean?       @default(false)
-  unbanned_date  DateTime?
-  mute_status    Boolean        @default(false)
-  unmute_date    DateTime?
-  random_name    String?        @db.VarChar(50)
-  warnings_count Int
-  Notification   Notification[]
 }
 
 model CommunityUser {
@@ -47,33 +36,6 @@ model Community {
   author_id   Int
   archived    Boolean? @default(false)
   disabled    Boolean? @default(false)
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  author_id   Int
-}
-
-model CommunityUser {
-  id           Int @id @default(autoincrement())
-  user_id      Int
-  community_id Int
-
-  @@unique([user_id, community_id])
-}
-
-model Notification {
-  notification_id Int      @id @default(autoincrement())
-  user_ID         Int
-  type            String   @db.VarChar(30)
-  time_sent       DateTime
-  opened          Boolean? @default(false)
-  User            User     @relation(fields: [user_ID], references: [id])
-}
-
-model WordBlacklist {
-  id        Int       @id @default(autoincrement())
-  word      String    @unique
-  dateAdded DateTime? @default(now())
 }
 
 model WordBlacklist {
