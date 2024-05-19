@@ -9,6 +9,7 @@ import {
   addUserToCommunity,
   removeUserFromCommunity,
 } from "../controllers/CommunityController.js";
+import auth from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -19,100 +20,16 @@ const router = Router();
  *   description: API for community management
  */
 
-/**
- * @swagger
- * /:
- *   get:
- *     tags: [Community]
- *     summary: Return all communities [only for debugging]
- *     responses:
- *       200:
- *         description: A list of communities
- */
-router.get("/", getCommunity);
+// only  for debbuging
 
-/**
- * @swagger
- * /get-user:
- *   get:
- *     tags: [Community]
- *     summary: Return all communities and it's users [only for debugging]
- *     responses:
- *       200:
- *         description: A list of communities and users
- */
-router.get("/get-user", getUserCommunity);
+router.get("/", auth, getCommunity);
+router.get("/get-user", auth, getUserCommunity);
 
-/**
- * @swagger
- * /:
- *   post:
- *     tags: [Community]
- *     summary: Add a new community
- *     parameters:
- *       - in: body
- *         name: community
- *         schema:
- *           type: object
- *           required:
- *             - authorId
- *             - name
- *             - description
- *           properties:
- *             authorId:
- *               type: integer
- *               description: The ID of the author creating the community
- *             name:
- *               type: string
- *               description: The name of the community
- *             description:
- *               type: string
- *               description: A description of the community
- *     responses:
- *       201:
- *         description: Successfully created community
- *       404:
- *         description: User does not exist
- *       500:
- *         description: Server error
- */
-router.post("/", body("name").notEmpty(), ErrorMiddleware, addCommunity);
-
-/**
- * @swagger
- * /:
- *   delete:
- *     tags: [Community]
- *     summary: Remove a community
- *     parameters:
- *       - in: body
- *         name: community
- *         schema:
- *           type: object
- *           required:
- *             - userId
- *             - removeCommunityId
- *           properties:
- *             userId:
- *               type: integer
- *               description: The ID of the user removing the community
- *             removeCommunityId:
- *               type: integer
- *               description: The ID of the community to be removed
- *     responses:
- *       204:
- *         description: Successfully removed community
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: User or Community does not exist
- *       500:
- *         description: Server error
- */
+router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
 router.delete(
   "/",
-  body("userId").notEmpty(),
   body("removeCommunityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   removeCommunity
 );
@@ -148,8 +65,8 @@ router.delete(
  */
 router.post(
   "/add-user",
-  body("userId").notEmpty(),
   body("communityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   addUserToCommunity
 );
@@ -191,9 +108,9 @@ router.post(
  */
 router.delete(
   "/remove-user",
-  body("userId").notEmpty(),
   body("userToRemoveId").notEmpty(),
   body("communityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   removeUserFromCommunity
 );
