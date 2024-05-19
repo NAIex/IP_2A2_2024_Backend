@@ -7,37 +7,48 @@ datasource db {
   url      = "postgresql://backend_dev:i am become death@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
 }
 
-model Admin {
-  id         Int     @id @default(autoincrement())
-  email      String  @unique
-  password   String
-  user_type  String  @default("admin")
-  log_status Boolean @default(false)
-}
-
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  password      String    @db.VarChar(60)
-  user_type     String    @default("user")
-  log_status    Boolean   @default(false)
-  ban_status    Boolean?  @default(false)
-  unbanned_date DateTime?
-  mute_status   Boolean   @default(false)
-  unmute_date   DateTime?
-  random_name   String?   @db.VarChar(50)
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String         @db.VarChar(60)
+  user_type      String         @default("user")
+  ban_status     Boolean?       @default(false)
+  unbanned_date  DateTime?
+  mute_status    Boolean        @default(false)
+  unmute_date    DateTime?
+  random_name    String?        @db.VarChar(50)
+  warnings_count Int
+  Notification   Notification[]
 }
 
 model Community {
-  id            Int       @id @default(autoincrement())
-  author_id     Int
-  name          String    
-  description   String?    
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  author_id   Int
+  archived    Boolean? @default(false)
+  disabled    Boolean? @default(false)
 }
 
 model CommunityUser {
-  id            Int       @id @default(autoincrement())
-  user_id       Int       
-  community_id  Int   
-  @@unique([user_id, community_id])    
-} 
+  id           Int @id @default(autoincrement())
+  user_id      Int
+  community_id Int
+
+  @@unique([user_id, community_id])
+}
+
+model Notification {
+  notification_id Int      @id @default(autoincrement())
+  user_ID         Int
+  type            String   @db.VarChar(30)
+  time_sent       DateTime
+  opened          Boolean? @default(false)
+  User            User     @relation(fields: [user_ID], references: [id])
+}
+
+model WordBlacklist {
+  id        Int       @id @default(autoincrement())
+  word      String    @unique
+  dateAdded DateTime? @default(now())
+}

@@ -13,6 +13,7 @@ export const getUserCommunity = async (req, res) => {
 
 export const addCommunity = async (req, res) => {
   const { authorId, name, description } = req.body;
+  console.log(req);
   try {
     const user = await prisma.user.findUnique({
       where: { id: authorId },
