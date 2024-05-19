@@ -44,8 +44,8 @@ function loadKey(filePath) {
 }
 
 // Load RSA keys using environment variables
-const privateKey = loadKey(process.env.PRIVATE_KEY_PATH);
-const publicKey = loadKey(process.env.PUBLIC_KEY_PATH);
+const privateKey = loadKey('./private_key.pem');
+const publicKey = loadKey('./public_key.pem');
 
 export async function signAccessToken(userId, email, isAdmin) {
     try {
