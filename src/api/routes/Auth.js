@@ -71,7 +71,7 @@ router.post('/login', user.login);
  *         description: Logout successful
  */
 router.post('/logout', user.logout);
-router.post('/generateRandomNames', user.generateRandomNames);
+router.get('/names', user.generateRandomNames);
 router.get('/', auth, user.all);
 
 export default router;
