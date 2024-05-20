@@ -6,7 +6,7 @@ import mute from "../controllers/MutedUsersController.js";
 const router = Router();
 /**
  * @swagger
- * /mute:
+ * /mute/users:
  *   get:
  *     summary: View all muted users
  *     description: Shows a list of all the muted users on the platform.
@@ -14,7 +14,7 @@ const router = Router();
  *       '200':
  *         description: List of all the muted users
  */
-router.get('/', mute.viewMutedUsers);
+router.get('/users', mute.viewMutedUsers);
 /**
  * @swagger
  * /mute:
