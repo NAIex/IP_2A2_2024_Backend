@@ -14,8 +14,15 @@ export const getUserCommunity = async (req, res) => {
 export const addCommunity = async (req, res) => {
   const { name, description } = req.body;
   const userId = req.user.userId;
-  console.log("id: " + userId);
+  const userEmail = req.user.email;
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
     const community = await prisma.community.create({
       data: { author_id: userId, name, description },
     });
@@ -27,9 +34,16 @@ export const addCommunity = async (req, res) => {
 
 export const removeCommunity = async (req, res) => {
   const { removeCommunityId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
   try {
-    const userId = req.user.userId;
-
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
     const communityExists = await prisma.community.findUnique({
       where: { id: removeCommunityId },
     });
@@ -63,8 +77,16 @@ export const removeCommunity = async (req, res) => {
 export const addUserToCommunity = async (req, res) => {
   const { communityId } = req.body;
   const userId = req.user.userId;
+  const userEmail = req.user.email;
 
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
     const communityExists = await prisma.community.findUnique({
       where: { id: communityId },
     });
@@ -72,7 +94,7 @@ export const addUserToCommunity = async (req, res) => {
       res.status(404).send("Community does not exist");
       return;
     }
-    const user = await prisma.communityUser.create({
+    const addUser = await prisma.communityUser.create({
       data: { user_id: userId, community_id: communityId },
     });
     res.status(201).send("Successfully added user to community");
@@ -84,8 +106,16 @@ export const addUserToCommunity = async (req, res) => {
 export const removeUserFromCommunity = async (req, res) => {
   const { userToRemoveId, communityId } = req.body;
   const userId = req.user.userId;
+  const userEmail = req.user.email;
 
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
     const userToRemoveExists = await prisma.user.findUnique({
       where: { id: userToRemoveId },
     });

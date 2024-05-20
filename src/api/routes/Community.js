@@ -37,7 +37,7 @@ router.get("/", auth, getCommunity);
 
 /**
  * @swagger
- * /get-user:
+ * /user:
  *   get:
  *     tags: [/community]
  *     summary: Return all communities and their users
@@ -47,7 +47,7 @@ router.get("/", auth, getCommunity);
  *       200:
  *         description: A list of communities and users
  */
-router.get("/get-user", auth, getUserCommunity);
+router.get("/user", auth, getUserCommunity);
 
 /**
  * @swagger
@@ -76,6 +76,8 @@ router.get("/get-user", auth, getUserCommunity);
  *     responses:
  *       201:
  *         description: Successfully created community
+ *       404:
+ *         description: User does not exist
  *       500:
  *         description: Server error
  */
@@ -107,7 +109,7 @@ router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Community does not exist
+ *         description: User or Community does not exist
  *       500:
  *         description: Server error
  */
@@ -121,7 +123,7 @@ router.delete(
 
 /**
  * @swagger
- * /add-user:
+ * /user:
  *   post:
  *     tags: [/community]
  *     summary: Add a user to a community
@@ -143,12 +145,12 @@ router.delete(
  *       201:
  *         description: Successfully added user to community
  *       404:
- *         description: Community does not exist
+ *         description: User or Community does not exist
  *       500:
  *         description: Server error
  */
 router.post(
-  "/add-user",
+  "/user",
   body("communityId").notEmpty(),
   auth,
   ErrorMiddleware,
@@ -156,7 +158,7 @@ router.post(
 );
 /**
  * @swagger
- * /remove-user:
+ * /user:
  *   delete:
  *     tags: [/community]
  *     summary: Remove a user from a community
@@ -189,7 +191,7 @@ router.post(
  *         description: Server error
  */
 router.delete(
-  "/remove-user",
+  "/user",
   body("userToRemoveId").notEmpty(),
   body("communityId").notEmpty(),
   auth,
