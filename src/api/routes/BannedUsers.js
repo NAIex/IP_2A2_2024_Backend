@@ -6,7 +6,7 @@ import ban from "../controllers/BannedUsersController.js";
 const router = Router();
 /**
  * @swagger
- * /ban:
+ * /ban/users:
  *   get:
  *     summary: View all banned users
  *     description: Shows a list of all the banned users on the platform.
@@ -14,7 +14,7 @@ const router = Router();
  *       '200':
  *         description: List of all the banned users
  */
-router.get('/', ban.viewBannedUsers);
+router.get('/users', ban.viewBannedUsers);
 /**
  * @swagger
  * /ban:
