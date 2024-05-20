@@ -9,7 +9,7 @@ import {
   addUserToCommunity,
   removeUserFromCommunity,
 } from "../controllers/CommunityController.js";
-
+import auth from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -24,30 +24,31 @@ const router = Router();
  */
 
 // only  for debbuging
-router.get("/", getCommunity);
-router.get("/get-user", getUserCommunity);
 
-router.post("/", body("name").notEmpty(), ErrorMiddleware, addCommunity);
+router.get("/", auth, getCommunity);
+router.get("/get-user", auth, getUserCommunity);
+
+router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
 router.delete(
   "/",
-  body("userId").notEmpty(),
   body("removeCommunityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   removeCommunity
 );
 
 router.post(
   "/add-user",
-  body("userId").notEmpty(),
   body("communityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   addUserToCommunity
 );
 router.delete(
   "/remove-user",
-  body("userId").notEmpty(),
   body("userToRemoveId").notEmpty(),
   body("communityId").notEmpty(),
+  auth,
   ErrorMiddleware,
   removeUserFromCommunity
 );
