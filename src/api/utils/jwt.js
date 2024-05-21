@@ -54,7 +54,7 @@ export async function signAccessToken(userId, email, isAdmin) {
     const payload = { userId, email, isAdmin };
     const token = jwt.sign(payload, privateKey, {
       algorithm: "RS256",
-      expiresIn: "60m",
+      expiresIn: "1m",
     });
     return token;
   } catch (error) {
