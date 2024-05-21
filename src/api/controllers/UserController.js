@@ -1,6 +1,6 @@
 import prisma from "../../prisma/index.js";
 
 export const getUsers = async (req, res) => {
-  const users = await prisma.user.findMany();
+  const users = await prisma.User.findMany();
   res.send(users);
 };
