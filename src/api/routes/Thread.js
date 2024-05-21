@@ -81,6 +81,8 @@ router.get("/community", auth, getThreadCommunity);
  *     responses:
  *       201:
  *         description: Successfully created thread
+ *       401:
+ *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Community does not exist
  *       500:
