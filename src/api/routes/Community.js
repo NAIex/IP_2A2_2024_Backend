@@ -26,7 +26,7 @@ const router = Router();
 // only  for debbuging
 
 router.get("/", auth, getCommunity);
-router.get("/get-user", auth, getUserCommunity);
+router.get("/user", auth, getUserCommunity);
 
 router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
 router.delete(
@@ -38,14 +38,14 @@ router.delete(
 );
 
 router.post(
-  "/add-user",
+  "/user",
   body("communityId").notEmpty(),
   auth,
   ErrorMiddleware,
   addUserToCommunity
 );
 router.delete(
-  "/remove-user",
+  "/user",
   body("userToRemoveId").notEmpty(),
   body("communityId").notEmpty(),
   auth,

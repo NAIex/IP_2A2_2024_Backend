@@ -52,3 +52,21 @@ model Notification {
   opened          Boolean? @default(false)
   User            User     @relation(fields: [user_ID], references: [id])
 }
+
+model Thread {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(50)
+  type          String   @default("text")
+  description   String?  @db.VarChar(255)
+  owner_id      Int
+  is_archived   Boolean? @default(false)
+  creation_time DateTime @default(now())
+}
+
+model CommunityThread {
+  id           Int @id @default(autoincrement())
+  community_id Int
+  thread_id    Int
+
+  @@unique([community_id, thread_id])
+}
