@@ -70,10 +70,14 @@ router.get("/community", auth, getThreadCommunity);
  *                 description: The name of the thread
  *               description:
  *                 type: string
- *                 description: A description of the thread
+ *                 description: A description of the thread (Optional)
  *               communityId:
  *                 type: integer
  *                 description: The ID of the community to which the thread belongs
+ *               type:
+ *                 type: string
+ *                 value: text or poll
+ *                 description: The type of the thread (Optional)
  *     responses:
  *       201:
  *         description: Successfully created thread
