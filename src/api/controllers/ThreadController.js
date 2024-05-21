@@ -29,10 +29,19 @@ export const addThread = async (req, res) => {
       res.status(404).send("Community does not exist");
       return;
     }
-    const thread = await prisma.Thread.create({
+    const userJoinCommunity = await prisma.communityUser.findMany({
+      where: { user_id: userId, community_id: communityId },
+    });
+    if (!userJoinCommunity.length) {
+      res
+        .status(401)
+        .send("Permission denied! User is not a member of the community.");
+      return;
+    }
+    const thread = await prisma.thread.create({
       data: { owner_id: userId, name, description, type },
     });
-    const threadCommunity = await prisma.CommunityThread.create({
+    const threadCommunity = await prisma.communityThread.create({
       data: { community_id: communityId, thread_id: thread.id },
     });
 
