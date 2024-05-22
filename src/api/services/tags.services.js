@@ -1,6 +1,7 @@
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 import { promises as fsPromises } from "fs";
+import jwt from 'jsonwebtoken';
 
 class TagService {
 
@@ -16,23 +17,25 @@ class TagService {
 
     static async postTags(tagData) {
         const { name } = tagData;
-
+    
         if (!name) {
             throw new Error("Tag name is required");
         }
-
-        const existingTag = await prisma.Tag.findUnique({
+    
+        const existingTag = await prisma.tag.findUnique({
             where: { name }
         });
-
+    
         if (existingTag) {
             throw new Error("Tag name already exists");
         }
-
-        return await prisma.Tag.create({
-            data: { name },
+    
+        return await prisma.tag.upsert({
+            where: { name },
+            update: {},
+            create: { name }
         });
-    }
+    } 
     
 }
 

@@ -30,7 +30,6 @@ class tagController {
             next(error);
         }
     };
-
 }
 
 export default tagController;
