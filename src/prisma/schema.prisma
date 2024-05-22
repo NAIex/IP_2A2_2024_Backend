@@ -21,15 +21,6 @@ model User {
   Notification   Notification[]
 }
 
-model Notification {
-  notification_id Int      @id @default(autoincrement())
-  user_ID         Int
-  type            String   @db.VarChar(30)
-  time_sent       DateTime
-  opened          Boolean? @default(false)
-  user            User     @relation(fields: [user_ID], references: [id])
-}
-
 model CommunityUser {
   id           Int @id @default(autoincrement())
   user_id      Int
@@ -51,4 +42,74 @@ model WordBlacklist {
   id        Int       @id @default(autoincrement())
   word      String    @unique
   dateAdded DateTime? @default(now())
+}
+
+model Notification {
+  notification_id Int      @id @default(autoincrement())
+  user_ID         Int
+  type            String   @db.VarChar(30)
+  time_sent       DateTime
+  opened          Boolean? @default(false)
+  User            User     @relation(fields: [user_ID], references: [id])
+}
+
+model Thread {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(50)
+  type          String   @default("text")
+  description   String?  @db.VarChar(255)
+  owner_id      Int
+  is_archived   Boolean? @default(false)
+  creation_time DateTime @default(now())
+}
+
+model CommunityThread {
+  id           Int @id @default(autoincrement())
+  community_id Int
+  thread_id    Int
+
+  @@unique([community_id, thread_id])
+}
+
+model Comment {
+  id        Int    @id @default(autoincrement())
+  content   String @db.VarChar(255)
+  author_id Int
+  like      Int    @default(0)
+  dislike   Int    @default(0)
+}
+
+model CommentSubcomment {
+  id            Int @id @default(autoincrement())
+  comment_id    Int
+  subcomment_id Int
+
+  @@unique([comment_id, subcomment_id])
+}
+
+model ThreadDirectComments {
+  id         Int @id @default(autoincrement())
+  thread_id  Int
+  comment_id Int
+
+  @@unique([comment_id, thread_id])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model TagRequest {
+  id      Int    @id @default(autoincrement())
+  tagName String
+  userId  Int
+}
+
+model ThreadTag {
+  id        Int @id @default(autoincrement())
+  tag_id    Int
+  thread_id Int
+
+  @@unique([thread_id, tag_id])
 }

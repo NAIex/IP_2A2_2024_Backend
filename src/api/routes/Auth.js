@@ -85,7 +85,7 @@ router.patch('/logout', user.logout);
  *       '200':
  *         description: Random names generated successfully
  */
-router.get('/randomName', user.generateRandomName);
+router.get('/names', user.generateRandomNames);
 /**
  * @swagger
  * /:
