@@ -3,7 +3,7 @@ import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 import { signAccessToken, verifyAccessToken } from '../utils/jwt.js';
 import { promises as fsPromises } from 'fs';
-import redisClient from '../utils/redisClient.js';
+// import redisClient from '../utils/redisClient.js';
 
 let availableNames = [];
 
@@ -177,11 +177,11 @@ class AuthService {
 
     // momentan nu merge
     
-    static async logout(token) {
-        const decoded = jwt.decode(token);
-        const expires = decoded.exp - Math.floor(Date.now() / 1000);
-        await redisClient.set(`blacklisted:${token}`, 'blacklisted', { EX: expires });
-    }
+    // static async logout(token) {
+    //     const decoded = jwt.decode(token);
+    //     const expires = decoded.exp - Math.floor(Date.now() / 1000);
+    //     await redisClient.set(`blacklisted:${token}`, 'blacklisted', { EX: expires });
+    // }
 
     static async all() {
         const allUsers = await prisma.User.findMany();
