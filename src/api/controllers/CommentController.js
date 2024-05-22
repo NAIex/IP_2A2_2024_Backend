@@ -34,18 +34,21 @@ export const addDirectComment = async (req, res) => {
       res.status(404).send("Thread does not exist");
       return;
     }
-    const communityThread = await prisma.communityThread.findMany({
-      where: { thread_id: threadExists.id },
+    const communityThread = await prisma.communityThread.findUnique({
+      where: { thread_id: threadId },
     });
+
     const userJoinCommunity = await prisma.communityUser.findMany({
-      where: { user_id: userId, community_id: communityThread.id },
+      where: { user_id: userId, community_id: communityThread.community_id },
     });
+
     if (!userJoinCommunity.length) {
       res
         .status(401)
         .send("Permission denied! User is not a member of the community.");
       return;
     }
+
     const comment = await prisma.comment.create({
       data: { content, author_id: userId },
     });
