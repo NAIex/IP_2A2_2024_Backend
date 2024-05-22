@@ -13,11 +13,51 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: npm install, build, and test
+      run: |
+        npm install
+
+    - name: Clean up current directory on remote machine
+      uses: appleboy/ssh-action@master
+      with:
+        HOST: "13.49.19.126	"
+        USERNAME: "ubuntu"
+        PORT: "22"
+        KEY: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEAnitQKJVYPXProL3SS8TtzerlwJe7/sP/6wFU7H843tfzMpkL
+          LUy2BZWM2SexSQyBgr5z0zNkAdigq+mehgnxQ2ZX86Ytt70aNQvVRpg+KfWgV3Jp
+          rbGJZA57+MbK7X0ojF4WHOhEVhq2fuHZiIoW5EmlDbVIoaSw7dC6FkII6DtBIEsG
+          GhwmWlau5hRip0IEHCdrXBX2NA72SO23OIvZMEk8BMBK0n2bA5W0QjSU83SpAStf
+          MsgcYsVGHuiwMuoV+AUOoQ7SJWoyyhgarcKQZr7FjT2/S91MVU3ibonbI5PrPouh
+          6RFIdf2mr3oMOBoRlz/o3SC5V3aPD/N2zqtUHQIDAQABAoIBACr+Lv25CpE5rzS0
+          JDOARfuQ+/6LwAgSEsA4TnMyaaz5GhwIyab4kQmXiv+D8IagpZt6VVV1RJvT3Gie
+          Sf65OSFO8l1CMG8fMb51hvV3cH5LS9g5O0yBU40k+sG2l3ZSbPEqqewVnm2hOTXo
+          Ag9BKdPHyNufCS0W7RjXgZ2HOZCWDRB2/Syf041pn+WjDdPo+KqPCLLuA5cBoJ9o
+          luTDiWFA7Ieh6zwXxt1aAAjCG90+m4bITFepjO+rXuQnEmQsI2ALkt5gRqaNkC8v
+          PHxJqc2RPywT1dbaWW8grIp/VQ7Xpny5g3W0U4+LU5LilBuicZULXnQKQ3Aw8yEg
+          gh+bOekCgYEA1qoOas9G4rgOBYuyiB6Pz/ujF2X6L46K/mjRYpObj8IxE1gxZOd9
+          8zGNEzSI8bBJD0M9f0q1RTTZ7fCtH1npHnIinQ+ff/dJK+fvgmIsYPQitjp7+obY
+          wZbdzUpCPikd3+svQpRQyWDzrff7N+Mty2pGxTDpGrrrrriDl8FRtDsCgYEAvKBQ
+          PgDPOdgSJiFYdn/52QX+LHFBXL+YYUi9puldpVzQ/4l8uJexAVV0tKxDf6Hd2AiL
+          Y+qiFEt9ZoAs0Ep3pZQZEWZkeIJlVa6EvqSnfIO5c6P+ljLWCMD+h6jWSsZ8hUyF
+          Nhksi8mqiK361Z89iZTq1VUBZFiXlv4HD+HYS4cCgYEApl0/NSoVDsqEG2or3/CH
+          ljG4MP8YiVjYgdjsRZCOJDjk3dAg38nExABoDDVP2Le9t3VuKMPWfp86MnyvPzfo
+          Qm9EQiMEgyE79SoYZhz9tdofOMlUolF1lXr9xQdDFXe6LnrPsrLNdXSNBgvFB4gq
+          Spa/6D1CuzOYSl23ppntX1cCgYAXg7y9Hgi3Y1JP4pROoYGaJn8bNzs4vsHWTuUl
+          q6368Wk0kgU0VeTBD9AuvdLkVF99kQMff56Y/Rgy8QOlK8NipuXBH4yi4U6Usd7m
+          jUw734f8/JK+UrQP/087xjaAt+HKFFH+/oBpJMjXpSjB/MoFHsVvttsnkUvEjQKA
+          Xl1CfQKBgCfpe3hGez5tEnNZqAgNBHy5X0b8ealzxuAv0TUc1L4jyou6MQSf2VxY
+          Tcia1cV+3+Pvtx9G6orLMXlzVvaKPuaHaFndvdqyemc/27B8zIsXsSiZK4FotojB
+          Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
+          -----END RSA PRIVATE KEY-----
+        script: sudo rm -rf /home/ubuntu/IP_BE_pub/*
+      
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
       with:
-        HOST: "51.20.180.174"
-        USERNAME: "ec2-user"
+        HOST: "13.49.19.126	"
+        USERNAME: "ubuntu"
         PORT: "22"
         KEY: |
           -----BEGIN RSA PRIVATE KEY-----
@@ -48,40 +88,43 @@ jobs:
           Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
           -----END RSA PRIVATE KEY-----
         source: "."
-        target: "/home/ec2-user/BE"
+        target: "/home/ubuntu/IP_BE_pub"
 
     - name: Executing remote command
       uses: appleboy/ssh-action@master
       with:
-        host: "51.20.180.174"
-        USERNAME: "ec2-user"
+        HOST: "13.49.19.126	"
+        USERNAME: "ubuntu"
         PORT: "22"
         KEY: |
-            -----BEGIN RSA PRIVATE KEY-----
-            MIIEowIBAAKCAQEAnitQKJVYPXProL3SS8TtzerlwJe7/sP/6wFU7H843tfzMpkL
-            LUy2BZWM2SexSQyBgr5z0zNkAdigq+mehgnxQ2ZX86Ytt70aNQvVRpg+KfWgV3Jp
-            rbGJZA57+MbK7X0ojF4WHOhEVhq2fuHZiIoW5EmlDbVIoaSw7dC6FkII6DtBIEsG
-            GhwmWlau5hRip0IEHCdrXBX2NA72SO23OIvZMEk8BMBK0n2bA5W0QjSU83SpAStf
-            MsgcYsVGHuiwMuoV+AUOoQ7SJWoyyhgarcKQZr7FjT2/S91MVU3ibonbI5PrPouh
-            6RFIdf2mr3oMOBoRlz/o3SC5V3aPD/N2zqtUHQIDAQABAoIBACr+Lv25CpE5rzS0
-            JDOARfuQ+/6LwAgSEsA4TnMyaaz5GhwIyab4kQmXiv+D8IagpZt6VVV1RJvT3Gie
-            Sf65OSFO8l1CMG8fMb51hvV3cH5LS9g5O0yBU40k+sG2l3ZSbPEqqewVnm2hOTXo
-            Ag9BKdPHyNufCS0W7RjXgZ2HOZCWDRB2/Syf041pn+WjDdPo+KqPCLLuA5cBoJ9o
-            luTDiWFA7Ieh6zwXxt1aAAjCG90+m4bITFepjO+rXuQnEmQsI2ALkt5gRqaNkC8v
-            PHxJqc2RPywT1dbaWW8grIp/VQ7Xpny5g3W0U4+LU5LilBuicZULXnQKQ3Aw8yEg
-            gh+bOekCgYEA1qoOas9G4rgOBYuyiB6Pz/ujF2X6L46K/mjRYpObj8IxE1gxZOd9
-            8zGNEzSI8bBJD0M9f0q1RTTZ7fCtH1npHnIinQ+ff/dJK+fvgmIsYPQitjp7+obY
-            wZbdzUpCPikd3+svQpRQyWDzrff7N+Mty2pGxTDpGrrrrriDl8FRtDsCgYEAvKBQ
-            PgDPOdgSJiFYdn/52QX+LHFBXL+YYUi9puldpVzQ/4l8uJexAVV0tKxDf6Hd2AiL
-            Y+qiFEt9ZoAs0Ep3pZQZEWZkeIJlVa6EvqSnfIO5c6P+ljLWCMD+h6jWSsZ8hUyF
-            Nhksi8mqiK361Z89iZTq1VUBZFiXlv4HD+HYS4cCgYEApl0/NSoVDsqEG2or3/CH
-            ljG4MP8YiVjYgdjsRZCOJDjk3dAg38nExABoDDVP2Le9t3VuKMPWfp86MnyvPzfo
-            Qm9EQiMEgyE79SoYZhz9tdofOMlUolF1lXr9xQdDFXe6LnrPsrLNdXSNBgvFB4gq
-            Spa/6D1CuzOYSl23ppntX1cCgYAXg7y9Hgi3Y1JP4pROoYGaJn8bNzs4vsHWTuUl
-            q6368Wk0kgU0VeTBD9AuvdLkVF99kQMff56Y/Rgy8QOlK8NipuXBH4yi4U6Usd7m
-            jUw734f8/JK+UrQP/087xjaAt+HKFFH+/oBpJMjXpSjB/MoFHsVvttsnkUvEjQKA
-            Xl1CfQKBgCfpe3hGez5tEnNZqAgNBHy5X0b8ealzxuAv0TUc1L4jyou6MQSf2VxY
-            Tcia1cV+3+Pvtx9G6orLMXlzVvaKPuaHaFndvdqyemc/27B8zIsXsSiZK4FotojB
-            Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
-            -----END RSA PRIVATE KEY-----
-        script: ls
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEAnitQKJVYPXProL3SS8TtzerlwJe7/sP/6wFU7H843tfzMpkL
+          LUy2BZWM2SexSQyBgr5z0zNkAdigq+mehgnxQ2ZX86Ytt70aNQvVRpg+KfWgV3Jp
+          rbGJZA57+MbK7X0ojF4WHOhEVhq2fuHZiIoW5EmlDbVIoaSw7dC6FkII6DtBIEsG
+          GhwmWlau5hRip0IEHCdrXBX2NA72SO23OIvZMEk8BMBK0n2bA5W0QjSU83SpAStf
+          MsgcYsVGHuiwMuoV+AUOoQ7SJWoyyhgarcKQZr7FjT2/S91MVU3ibonbI5PrPouh
+          6RFIdf2mr3oMOBoRlz/o3SC5V3aPD/N2zqtUHQIDAQABAoIBACr+Lv25CpE5rzS0
+          JDOARfuQ+/6LwAgSEsA4TnMyaaz5GhwIyab4kQmXiv+D8IagpZt6VVV1RJvT3Gie
+          Sf65OSFO8l1CMG8fMb51hvV3cH5LS9g5O0yBU40k+sG2l3ZSbPEqqewVnm2hOTXo
+          Ag9BKdPHyNufCS0W7RjXgZ2HOZCWDRB2/Syf041pn+WjDdPo+KqPCLLuA5cBoJ9o
+          luTDiWFA7Ieh6zwXxt1aAAjCG90+m4bITFepjO+rXuQnEmQsI2ALkt5gRqaNkC8v
+          PHxJqc2RPywT1dbaWW8grIp/VQ7Xpny5g3W0U4+LU5LilBuicZULXnQKQ3Aw8yEg
+          gh+bOekCgYEA1qoOas9G4rgOBYuyiB6Pz/ujF2X6L46K/mjRYpObj8IxE1gxZOd9
+          8zGNEzSI8bBJD0M9f0q1RTTZ7fCtH1npHnIinQ+ff/dJK+fvgmIsYPQitjp7+obY
+          wZbdzUpCPikd3+svQpRQyWDzrff7N+Mty2pGxTDpGrrrrriDl8FRtDsCgYEAvKBQ
+          PgDPOdgSJiFYdn/52QX+LHFBXL+YYUi9puldpVzQ/4l8uJexAVV0tKxDf6Hd2AiL
+          Y+qiFEt9ZoAs0Ep3pZQZEWZkeIJlVa6EvqSnfIO5c6P+ljLWCMD+h6jWSsZ8hUyF
+          Nhksi8mqiK361Z89iZTq1VUBZFiXlv4HD+HYS4cCgYEApl0/NSoVDsqEG2or3/CH
+          ljG4MP8YiVjYgdjsRZCOJDjk3dAg38nExABoDDVP2Le9t3VuKMPWfp86MnyvPzfo
+          Qm9EQiMEgyE79SoYZhz9tdofOMlUolF1lXr9xQdDFXe6LnrPsrLNdXSNBgvFB4gq
+          Spa/6D1CuzOYSl23ppntX1cCgYAXg7y9Hgi3Y1JP4pROoYGaJn8bNzs4vsHWTuUl
+          q6368Wk0kgU0VeTBD9AuvdLkVF99kQMff56Y/Rgy8QOlK8NipuXBH4yi4U6Usd7m
+          jUw734f8/JK+UrQP/087xjaAt+HKFFH+/oBpJMjXpSjB/MoFHsVvttsnkUvEjQKA
+          Xl1CfQKBgCfpe3hGez5tEnNZqAgNBHy5X0b8ealzxuAv0TUc1L4jyou6MQSf2VxY
+          Tcia1cV+3+Pvtx9G6orLMXlzVvaKPuaHaFndvdqyemc/27B8zIsXsSiZK4FotojB
+          Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
+          -----END RSA PRIVATE KEY-----
+        script: |
+            cd /home/ubuntu/IP_BE_pub
+            ls
+            
