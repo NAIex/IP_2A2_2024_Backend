@@ -5,4 +5,6 @@ const router = Router();
 
 router.get('/', tag.getTags);
 
+router.post('/', tag.postTags);
+
 export default router;
