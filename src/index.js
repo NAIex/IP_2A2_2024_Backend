@@ -11,6 +11,7 @@ import UserAuth from "./api/routes/Auth.js";
 import WordBlacklist from "./api/routes/WordBlacklist.js";
 import Community from "./api/routes/Community.js";
 import Thread from "./api/routes/Thread.js";
+import Comment from "./api/routes/Comment.js";
 import Feed from "./api/routes/Feed.js";
 const app = express();
 const port = 4000;
@@ -25,6 +26,7 @@ app.use("/user", User);
 app.use("/", WordBlacklist);
 app.use("/community", Community);
 app.use("/thread", Thread);
+app.use("/comment", Comment);
 app.use("/feed", Feed);
 app.use("/", UserAuth);
 
