@@ -7,6 +7,7 @@ import {
   getCommentSubcomment,
   addDirectComment,
   addSubcomment,
+  deleteComment,
 } from "../controllers/CommentController.js";
 import auth from "../middlewares/auth.js";
 
@@ -149,6 +150,45 @@ router.post(
   auth,
   ErrorMiddleware,
   addSubcomment
+);
+
+/**
+ * @swagger
+ * :
+ *   delete:
+ *     tags: [/comment]
+ *     summary: Remove a comment
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - commentId
+ *             properties:
+ *               commentId:
+ *                 type: integer
+ *                 description: The ID of the comment to be removed
+ *     responses:
+ *       204:
+ *         description: Successfully removed thread
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User or Comment does not exist
+ *       500:
+ *         description: Server error
+ */
+
+router.delete(
+  "/",
+  body("commentId").notEmpty(),
+  auth,
+  ErrorMiddleware,
+  deleteComment
 );
 
 export default router;

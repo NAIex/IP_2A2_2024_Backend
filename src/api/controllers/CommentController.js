@@ -112,3 +112,44 @@ export const addSubcomment = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
+export const deleteComment = async (req, res) => {
+  const { commentId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    const commentExists = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!commentExists) {
+      res.status(404).send("Comment does not exist");
+      return;
+    }
+
+    const userIsAuthor = await prisma.comment.findUnique({
+      where: { id: commentId, author_id: userId },
+    });
+
+    if (!userIsAuthor && !req.user.isAdmin) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: { deleted: true },
+    });
+
+    res.status(204).send("Successfully removed comment");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
