@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - b2-add-threads
-
 jobs:
   build:
 
