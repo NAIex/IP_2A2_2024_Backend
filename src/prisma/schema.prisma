@@ -36,7 +36,7 @@ model Community {
 model CommunityThread {
   id           Int @id @default(autoincrement())
   community_id Int
-  thread_id    Int
+  thread_id    Int @unique
 
   @@unique([community_id, thread_id])
 }
