@@ -123,4 +123,6 @@ jobs:
           Tcia1cV+3+Pvtx9G6orLMXlzVvaKPuaHaFndvdqyemc/27B8zIsXsSiZK4FotojB
           Ik6l+l63uGwifQsNOXRoPY4ZkGR7iPVFZSnvdHE60XCfOaUJryUG
           -----END RSA PRIVATE KEY-----
-        script: tmux new-session -d -s mysession 'cd /home/ubuntu/IP_BE_pub && cd src/prisma && npx prisma generate && cd /home/ubuntu/IP_BE_pub && npm run start'
+        script: |
+            tmux kill-session -t mysession
+            tmux new-session -d -s mysession 'cd /home/ubuntu/IP_BE_pub && cd src/prisma && npx prisma generate && cd /home/ubuntu/IP_BE_pub && npm run start'
