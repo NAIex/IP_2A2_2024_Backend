@@ -14,10 +14,9 @@ class TagService {
     }
 
     static async postTags(req) {
-        
-        const userId = 4;
+        const userId = req.user.userId;
         const { name } = req.body;
-    
+
         if (!name) {
             throw new Error("Tag name is required");
         }
@@ -30,16 +29,23 @@ class TagService {
             throw new Error("Tag name already exists in Tag table");
         }
     
-        const existingTagRequest = await prisma.TagRequest.findUnique({
-            where: { tagName: name }
+        const existingTagRequest = await prisma.TagRequest.findFirst({
+            where: {
+                tagName: name
+            }
         });
     
         if (!existingTagRequest) {
             return await prisma.TagRequest.create({
-                data: { tagName: name, userId: userId }
+                data: {
+                    tagName: name,
+                    userId: userId
+                }
             });
         }
-    }
+    
+        throw new Error("Tag request already exists");
+    }    
     
 }
 
