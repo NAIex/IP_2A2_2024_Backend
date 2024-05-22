@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import swaggerUi from "swagger-ui-express";
 import specs from "./api/utils/swagger.js";
@@ -10,9 +11,11 @@ import UserAuth from "./api/routes/Auth.js";
 import WordBlacklist from "./api/routes/WordBlacklist.js";
 import Community from "./api/routes/Community.js";
 import Thread from "./api/routes/Thread.js";
+
 const app = express();
 const port = 4000;
 
+app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(bodyParser.urlencoded({ extended: false }));
