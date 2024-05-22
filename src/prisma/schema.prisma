@@ -70,3 +70,22 @@ model CommunityThread {
 
   @@unique([community_id, thread_id])
 }
+
+model TagThread {
+  id          Int @id @default(autoincrement())
+  tag_id      Int
+  thread_id   Int
+
+  @@unique([thread_id, tag_id])
+}
+
+model Tag {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+}
+
+model TagRequest {
+  id       Int       @id @default(autoincrement())
+  tagName  String
+  userId   Int
+}
