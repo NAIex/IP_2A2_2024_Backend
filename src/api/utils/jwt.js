@@ -24,9 +24,10 @@ const publicKey = loadKey("./public_key.pem");
 export async function signAccessToken(userId, email, isAdmin) {
   try {
     const payload = { userId, email, isAdmin };
+    const expTime = process.env.JWT_EXP
     const token = jwt.sign(payload, privateKey, {
       algorithm: "RS256",
-      expiresIn: "1m",
+      expiresIn: expTime,
     });
     return token;
   } catch (error) {
