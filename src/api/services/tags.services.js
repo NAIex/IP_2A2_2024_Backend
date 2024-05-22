@@ -12,7 +12,7 @@ class TagService {
     }
 
     static async postTags(userData) {
-        const { name } = userData;
+        const { name } = userData.name;
 
         if (!name) {
             return next(createError(400, "Tag name is required"));
