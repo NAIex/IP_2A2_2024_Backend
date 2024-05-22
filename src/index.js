@@ -10,6 +10,8 @@ import UserAuth from "./api/routes/Auth.js";
 import WordBlacklist from "./api/routes/WordBlacklist.js";
 import Community from "./api/routes/Community.js";
 import Thread from "./api/routes/Thread.js";
+import Tag from "./api/routes/Tags.js"
+
 const app = express();
 const port = 4000;
 
@@ -22,7 +24,8 @@ app.use("/user", User);
 app.use("/", WordBlacklist);
 app.use("/community", Community);
 app.use("/thread", Thread);
-app.use("/", UserAuth);
+app.use("/auth", UserAuth);
+app.use("/tag", Tag);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
