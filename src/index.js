@@ -7,8 +7,9 @@ import specs from "./api/utils/swagger.js";
 
 import User from "./api/routes/User.js";
 import UserAuth from './api/routes/Auth.js';
-import WordBlacklist from './api/routes/WordBlacklist.js';
 import Community from "./api/routes/Community.js";
+import BannedUsers from "./api/routes/BannedUsers.js";
+import WordBlacklist from './api/routes/WordBlacklist.js';
 import MutedUsers from './api/routes/MutedUsers.js';
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use("/user", User);
 app.use("/", WordBlacklist);
 app.use("/community", Community);
+app.use("/ban", BannedUsers);
 app.use('/', UserAuth);
 app.use('/mute', MutedUsers);
 

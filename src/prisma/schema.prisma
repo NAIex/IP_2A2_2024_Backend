@@ -18,7 +18,7 @@ model User {
   unmute_date    DateTime?
   random_name    String?        @db.VarChar(50)
   warnings_count Int
-  notifications  Notification[]
+  Notification   Notification[]
 }
 
 model Notification {
