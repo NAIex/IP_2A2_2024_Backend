@@ -9,6 +9,7 @@ import User from "./api/routes/User.js";
 import UserAuth from './api/routes/Auth.js';
 import Community from "./api/routes/Community.js";
 import BannedUsers from "./api/routes/BannedUsers.js";
+import WordBlacklist from './api/routes/WordBlacklist.js';
 
 const app = express();
 const port = 4000;
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/user", User);
+app.use("/", WordBlacklist);
 app.use("/community", Community);
 app.use("/ban", BannedUsers);
 app.use('/', UserAuth);

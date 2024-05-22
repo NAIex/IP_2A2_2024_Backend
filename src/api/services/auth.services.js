@@ -1,7 +1,8 @@
-import bcrypt from "bcryptjs";
-import jwt from "../utils/jwt.js";
+import bcrypt from 'bcryptjs';
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
+import jwtUtils from '../utils/jwt.js';
+import { promises as fsPromises } from 'fs';
 
 class AuthService {
 
@@ -21,7 +22,7 @@ class AuthService {
             const domainCheck = /^.*(@student\.uaic\.ro)|(@info\.uaic\.ro)|(@uaic\.ro)$/;
 
             if(!domainCheck.test(email)) {
-                throw createError.BadRequest('Email domain has to follow one of these formats:\nfor students - @student.uaic.ro\nfor professors - @info.uaic.ro or @uaic.ro');
+                throw createError.BadRequest('Email domain has to follow one of these formats: for students - @student.uaic.ro/for professors - @info.uaic.ro or @uaic.ro');
             }
 
             throw createError.BadRequest('Invalid email name or email does not exist');
@@ -41,21 +42,21 @@ class AuthService {
             const passwordErrors = [];
 
             if (!/(?=.*[a-z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one lowercase letter');
+                passwordErrors.push('contain at least one lowercase letter');
             }
             if (!/(?=.*[A-Z])/.test(password)) {
-                passwordErrors.push('Password must contain at least one uppercase letter');
+                passwordErrors.push('contain at least one uppercase letter');
             }
             if (!/(?=.*\d)/.test(password)) {
-                passwordErrors.push('Password must contain at least one digit');
+                passwordErrors.push('contain at least one digit');
             }
             if (!/(?=.*[\W_])/.test(password)) {
-                passwordErrors.push('Password must contain at least one special character');
+                passwordErrors.push('contain at least one special character');
             }
             if (!/.{10,20}/.test(password)) {
-                passwordErrors.push('Password must be between 10 and 20 characters long');
+                passwordErrors.push('be between 10 and 20 characters long');
             }
-            throw createError.BadRequest(`\n${passwordErrors.join('\n')}`);
+            throw createError.BadRequest('Invalid password. Password must: ' + `${passwordErrors.join(', ')}` + '.');
         } 
 
         const user = await prisma.User.findUnique({
@@ -70,7 +71,8 @@ class AuthService {
             data: {
                 email: userData.email,
                 password: hashedPassword,
-                user_type: userType
+                user_type: userType,
+                warnings_count: 0
             },
         })
     
@@ -78,68 +80,97 @@ class AuthService {
     }
 
     static async login(userData) {
-        const { email, password } = userData;
+        
+        const { email, password, chosenName } = userData;
+        let isAdmin = false;
 
-        let model;
-        if (email.endsWith("@admin.uaic.ro")) {
-            model = prisma.Admin;
-        } else if (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro")) {
-            model = prisma.User;
+        if (["aot.admin1@gmail.com", "aot.admin2@gmail.com", "aot.admin3@gmail.com"].includes(email)) {
+            isAdmin = true;
+        } else if (email && (email.endsWith("@info.uaic.ro") || email.endsWith("@uaic.ro") || email.endsWith("@student.uaic.ro"))) {
+            isAdmin = false;
         } else {
             throw createError.NotFound('Email format not recognized');
         }
 
-        const user = await model.findUnique({
-            where: { email: email },
-        });
-
-        if (!user) throw createError.NotFound('User not registered');
-
-        const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) throw createError.Unauthorized('Email address or password not valid');
-
-        await model.update({
-            where: { email: email },
-            data: { log_status: true },
-        });
-
-        const { password: _, ...userWithoutPassword } = user;
-
-        return userWithoutPassword;
-    }
-
-    // just for testing, not the actual function
-
-    static async logout(userData) {
-        const { email } = userData;
-
-        let model;
-        if (email.endsWith("@admin.uaic.ro")) {
-            model = prisma.Admin;
-        } else if (email.endsWith("@profesor.uaic.ro") || email.endsWith("@student.uaic.ro")) {
-            model = prisma.User;
-        } else {
-            throw createError.NotFound('Email format not recognized');
-        }
-
-        const user = await model.findUnique({
+        const user = await prisma.User.findUnique({
             where: { email: email },
         });
 
         if (!user) {
-            throw new Error('User not found');
+            throw createError.NotFound('User not registered');
         }
 
-        await model.update({
-            where: { email: email },
-            data: { log_status: false },
+        let checkPassword = isAdmin ? (password === user.password) : await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            throw createError.Unauthorized('Invalid password');
+        }
+
+        if (isAdmin && chosenName) {
+            throw createError.BadRequest('Admins cannot use random names');
+        } else if (!isAdmin && chosenName) {
+            await AuthService.assignRandomName(user.id, chosenName);
+        } else if (!isAdmin && chosenName == null) {
+            throw createError.BadRequest('Name must be provided');
+        }
+
+        const token = await jwtUtils.signAccessToken(user.id, user.email, isAdmin);
+
+        return { token, user: { ...user, password: undefined } };
+    }
+
+    static async assignRandomName(userId, chosenName) {
+
+        const existingUser = await prisma.User.findFirst({
+            where: { random_name: chosenName }
         });
 
-        return { message: "Successfully logged out" };
+        if (existingUser) {
+            throw createError.Conflict('This name is already taken');
+        }
+
+        const updatedUser = await prisma.User.update({
+            where: { id: userId },
+            data: { random_name: chosenName }
+        });
+
+        return updatedUser;
+    }
+
+    static getRandomElement(array) {
+        const randomIndex = Math.floor(Math.random() * array.length);
+        return array[randomIndex];
+    }
+
+    static async generateRandomName() {
+
+        const data = await fsPromises.readFile('./src/api/services/cuteNames.json', 'utf8');
+        const namesJson = JSON.parse(data);
+
+        const namesList = [];
+
+        for (let i = 0; i < 15; i++) {
+            const formatChoice = Math.floor(Math.random() * 3);
+            let name = '';
+
+            if (formatChoice === 0) {
+                name = this.getRandomElement(namesJson.X1) + this.getRandomElement(namesJson.A) + this.getRandomElement(namesJson.X3);
+            } else if (formatChoice === 1) {
+                name = this.getRandomElement(namesJson.X1) + this.getRandomElement(namesJson.B) + this.getRandomElement(namesJson.X3);
+            } else if (formatChoice === 2) {
+                name = "Your" + this.getRandomElement(namesJson.C) + this.getRandomElement(namesJson.A) + this.getRandomElement(namesJson.X3);
+            }
+
+            name = name.replace(/The/g, '');
+
+            namesList.push(name);
+        }
+
+        return namesList;
     }
 
     static async all() {
-        const allUsers = await prisma.users.findMany();
+        const allUsers = await prisma.User.findMany();
         return allUsers;
     }
 }
