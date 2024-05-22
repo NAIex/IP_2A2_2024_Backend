@@ -6,7 +6,7 @@ import adminTag from "../controllers/AdminTagRequestController.js";
 const router = Router();
 /**
  * @swagger
- * /adminTag/:
+ * /:
  *   get:
  *     summary: View all tag requests
  *     description: Shows a list of all the banned users on the platform.
@@ -17,7 +17,7 @@ const router = Router();
 router.get('/', adminTag.viewTagRequests);
 /**
  * @swagger
- * /adminTag/:
+ * /:
  *   post:
  *     summary: Approve a tag request
  *     description: Adds a tag that was requested by a user into the tag list and removes it from the tag request list.
@@ -41,7 +41,7 @@ router.get('/', adminTag.viewTagRequests);
 router.post('/', adminTag.approveTag);
 /**
  * @swagger
- * /adminTag/:
+ * /:
  *   delete:
  *     summary: Reject a tag request
  *     description: Delete a tag request from the tag request list.
