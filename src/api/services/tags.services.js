@@ -4,7 +4,7 @@ import { promises as fsPromises } from "fs";
 
 class TagService {
 
-    static async getTags(req, res) {
+    static async getTags() {
         try {
             const tags = await prisma.Tag.findMany();
             return tags;
@@ -14,32 +14,26 @@ class TagService {
         }
     }
 
-    static async postTags(req, res, next) { 
-        const { name } = req.body;
+    static async postTags(tagData) {
+        const { name } = tagData;
 
         if (!name) {
-            return next(createError(400, "Tag name is required"));
+            throw new Error("Tag name is required");
         }
 
-        try {
-            const existingTag = await prisma.Tag.findUnique({
-                where: { name }
-            });
+        const existingTag = await prisma.Tag.findUnique({
+            where: { name }
+        });
 
-            if (existingTag) {
-                return next(createError(409, "Tag name already exists"));
-            }
-
-            const tag = await prisma.Tag.create({
-                data: { name },
-            });
-
-            res.status(201).json(tag);
-        } catch (error) {
-            console.error("Error creating tag:", error);
-            next(createError(500, "Unable to create tag"));
+        if (existingTag) {
+            throw new Error("Tag name already exists");
         }
+
+        return await prisma.Tag.create({
+            data: { name },
+        });
     }
+    
 }
 
 export default TagService;
