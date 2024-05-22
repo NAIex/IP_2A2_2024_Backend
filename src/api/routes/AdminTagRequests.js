@@ -12,15 +12,15 @@ const router = Router();
  *     description: Shows a list of all the banned users on the platform.
  *     responses:
  *       '200':
- *         description: List of all the banned users
+ *         description: List of all the current tag requests
  */
-router.get('/', adminTag.showTagRequests);
+router.get('/', adminTag.viewTagRequests);
 /**
  * @swagger
- * /ban:
- *   patch:
- *     summary: Unban a user
- *     description: Changes a user's ban_status to false.
+ * /adminTag/:
+ *   post:
+ *     summary: Approve a tag request
+ *     description: Adds a tag that was requested by a user into the tag list and removes it from the tag request list.
  *     requestBody:
  *       required: true
  *       content:
@@ -32,19 +32,19 @@ router.get('/', adminTag.showTagRequests);
  *                 type: integer
  *     responses:
  *       '200':
- *         description: User unbanned succesfully
+ *         description: Tag approved succesfully
  *       '404':
- *         description: User not registered
- *       '406':
- *         description: User is not banned
+ *         description: Tag request not existent
+ *       '409':
+ *         description: Tag already exists
  */
-router.patch('/', ban.unbanUser);
+router.post('/', adminTag.approveTag);
 /**
  * @swagger
- * /ban:
- *   put:
- *     summary: Ban a user
- *     description: Changes a user's ban_status to true and sets their unban_date.
+ * /adminTag/:
+ *   delete:
+ *     summary: Reject a tag request
+ *     description: Delete a tag request from the tag request list.
  *     requestBody:
  *       required: true
  *       content:
@@ -56,25 +56,10 @@ router.patch('/', ban.unbanUser);
  *                 type: integer
  *     responses:
  *       '200':
- *         description: User banned succesfully
- *       '400':
- *         description: Admins cannot be banned
+ *         description: Tag rejected succesfully
  *       '404':
- *         description: User not registered
- *       '406':
- *         description: User is already banned
+ *         description: Tag request not existent
  */
-router.put('/', ban.banUser);
-/**
- * @swagger
- * /ban/candidates:
- *   get:
- *     summary: View all users that are ban candidates
- *     description: Shows a list of all the users that could be banned by an admin in the future.
- *     responses:
- *       '200':
- *         description: List of all the ban candidates
- */
-router.get('/candidates', ban.viewBanCandidates);
+router.delete('/', adminTag.rejectTag);
 
 export default router;
