@@ -94,6 +94,11 @@ export const addUserToCommunity = async (req, res) => {
       res.status(404).send("Community does not exist");
       return;
     }
+
+    if (communityExists.archived || communityExists.disabled) {
+      return res.status(401).send("Unauthorized");
+    }
+
     const addUser = await prisma.communityUser.create({
       data: { user_id: userId, community_id: communityId },
     });
@@ -150,6 +155,49 @@ export const removeUserFromCommunity = async (req, res) => {
     }
     res.status(204).send("Successful removal of the user from the community");
   } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+export const turnOffCommunity = async (req, res) => {
+  const { userId, communityId, type } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { user_type: true },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+    const communityDB = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!communityDB) {
+      res.status(404).send("Community does not exist");
+      return;
+    }
+
+    const userIsAuthor = await prisma.community.findUnique({
+      where: { id: communityId, author_id: userId },
+    });
+    if (!userIsAuthor && user.user_type != "admin") {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
+    const communityUpdated = await prisma.community.update({
+      where: { id: communityId },
+      data: {
+        ...(type == "archive"
+          ? { archived: !communityDB.archived }
+          : { disabled: !communityDB.disabled }),
+      },
+    });
+
+    res.status(200).send("Successfully updated");
+  } catch (e) {
+    console.log(e);
     res.status(500).json(e);
   }
 };
