@@ -72,11 +72,12 @@ model CommunityThread {
 }
 
 model Comment {
-  id        Int    @id @default(autoincrement())
-  content   String @db.VarChar(255)
+  id        Int       @id @default(autoincrement())
+  content   String    @db.VarChar(255)
   author_id Int
-  like      Int    @default(0)
-  dislike   Int    @default(0)
+  like      Int       @default(0)
+  dislike   Int       @default(0)
+  deleted   Boolean   @default(false)
 }
 
 model CommentSubcomment {

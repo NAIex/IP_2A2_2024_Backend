@@ -19,17 +19,28 @@ class tagController {
 
     static postTags = async (req, res, next) => {
         try {
-            const tag = await TagService.postTags(req);
-            res.status(201).json({
-                status: true,
-                message: "Tag created successfully!",
-                data: tag
-            });
+            const result = await TagService.postTags(req);
+            if (result) {
+                res.status(201).json({
+                    status: true,
+                    message: "Tag request created successfully!",
+                    data: result
+                });
+            } else {
+                res.status(409).json({
+                    status: false,
+                    message: "Tag request already exists or tag is already available."
+                });
+            }
         } catch (error) {
-            console.error("Error in creating tag:", error.message);
-            next(error);
+            console.error("Error in handling tag request:", error.message);
+            res.status(400).json({
+                status: false,
+                message: error.message
+            });
         }
     };
+    
 }
 
 export default tagController;

@@ -31,7 +31,7 @@ const router = Router();
  *       '403':
  *         description: Email already registered
  */
-router.post('/', user.register);
+router.post('/register', user.register);
 /**
  * @swagger
  * /:
@@ -59,7 +59,7 @@ router.post('/', user.register);
  *       '404':
  *         description: User not found
  */
-router.put('/', user.login);
+router.post('/login', user.login);
 /**
  * @swagger
  * /:

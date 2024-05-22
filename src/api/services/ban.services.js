@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
 
