@@ -15,14 +15,18 @@ class TagService {
         }
     }
 
-    static async postTags(tagData) {
-        const { name } = tagData;
+    static async postTags(req) {
+
+        const userId = req.user.id;
+        const { name } = req.body;
+
+        console.log('##########################################' + name, userId);
     
         if (!name) {
             throw new Error("Tag name is required");
         }
     
-        const existingTag = await prisma.tag.findUnique({
+        const existingTag = await prisma.Tag.findUnique({
             where: { name }
         });
     
@@ -30,12 +34,10 @@ class TagService {
             throw new Error("Tag name already exists");
         }
     
-        return await prisma.tag.upsert({
-            where: { name },
-            update: {},
-            create: { name }
-        });
-    } 
+        return await prisma.TagRequest.create({
+            data: { tagName: name, userId: userId },
+        })
+    }
     
 }
 

@@ -1,34 +1,3 @@
-// momentan nu merge logout ul
-
-// import jwt from 'jsonwebtoken';
-// import createError from 'http-errors';
-// import redisClient from '../utils/redisClient.js';
-
-// const isAuthenticated = async (req, res, next) => {
-//     const authHeader = req.headers.authorization;
-//     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-//         return next(createError.Unauthorized('Authorization token required'));
-//     }
-
-//     const token = authHeader.split(' ')[1];
-//     try {
-//         const isBlacklisted = await redisClient.get(`blacklisted:${token}`);
-//         if (isBlacklisted) {
-//             throw createError.Unauthorized('Token has been blacklisted');
-//         }
-        
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//         req.user = decoded;
-//         next();
-//     } catch (error) {
-//         next(createError.Unauthorized(error.message));
-//     }
-// };
-
-// export default isAuthenticated;
-
-
-
 import { verifyAccessToken } from '../utils/jwt.js';
 import createError from 'http-errors';
 
