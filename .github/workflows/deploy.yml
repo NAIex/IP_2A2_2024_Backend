@@ -133,5 +133,5 @@ jobs:
             screen -S BE -X quit
             screen -S BE
             cd /home/ubuntu/IP_BE_pub
-            npm run start
+            npm run start &
             
