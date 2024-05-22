@@ -71,10 +71,34 @@ model CommunityThread {
   @@unique([community_id, thread_id])
 }
 
-model TagThread {
-  id          Int @id @default(autoincrement())
-  tag_id      Int
-  thread_id   Int
+model Comment {
+  id        Int    @id @default(autoincrement())
+  content   String @db.VarChar(255)
+  author_id Int
+  like      Int    @default(0)
+  dislike   Int    @default(0)
+}
+
+model CommentSubcomment {
+  id            Int @id @default(autoincrement())
+  comment_id    Int
+  subcomment_id Int
+
+  @@unique([comment_id, subcomment_id])
+}
+
+model ThreadDirectComments {
+  id         Int @id @default(autoincrement())
+  thread_id  Int
+  comment_id Int
+
+  @@unique([comment_id, thread_id])
+}
+
+model ThreadTag {
+  id           Int @id @default(autoincrement())
+  tag_id Int
+  thread_id    Int
 
   @@unique([thread_id, tag_id])
 }

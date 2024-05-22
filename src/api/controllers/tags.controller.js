@@ -1,14 +1,14 @@
 import TagService from "../services/tags.services.js";
 
-class tagController {
+class TagController {
 
     static getTags = async (req, res, next) => {
         try {
-            const data = await TagService.getTags();
+            const tags = await TagService.getTags();
             res.status(200).json({
                 status: true,
                 message: "Tags displayed successfully!",
-                data
+                data: tags
             });
         } catch (e) {
             next(e);
@@ -19,4 +19,4 @@ class tagController {
 
 }
 
-export default tagController;
+export default TagController;
