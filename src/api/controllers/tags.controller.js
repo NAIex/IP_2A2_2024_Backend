@@ -19,16 +19,9 @@ class tagController {
 
     static postTags = async (req, res, next) => {
         try {
-            const tags = await TagService.postTags(req.body);
-            res.status(200).json({
-                status: true,
-                message: "Tag successfully added!",
-                data: tags
-            });
+            await TagService.postTags(req, res, next); 
         } catch (e) {
             next(e);
-            console.log(e);
-            res.send(e);
         }
     };
 
