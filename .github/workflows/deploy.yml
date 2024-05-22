@@ -130,4 +130,6 @@ jobs:
             cd src/prisma
             npx prisma generate
             cd ../../
+            pkill -f 'node ./src/index.js' # Kill the current node process
+            nohup npm start & # Start the server with nodemon
             
