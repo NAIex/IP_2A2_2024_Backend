@@ -21,11 +21,13 @@ model User {
   Notification   Notification[]
 }
 
-model Community {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  author_id   Int
+model Notification {
+  notification_id Int      @id @default(autoincrement())
+  user_ID         Int
+  type            String   @db.VarChar(30)
+  time_sent       DateTime
+  opened          Boolean? @default(false)
+  user            User     @relation(fields: [user_ID], references: [id])
 }
 
 model CommunityUser {
@@ -36,13 +38,13 @@ model CommunityUser {
   @@unique([user_id, community_id])
 }
 
-model Notification {
-  notification_id Int      @id @default(autoincrement())
-  user_ID         Int
-  type            String   @db.VarChar(30)
-  time_sent       DateTime
-  opened          Boolean? @default(false)
-  User            User     @relation(fields: [user_ID], references: [id])
+model Community {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  author_id   Int
+  archived    Boolean? @default(false)
+  disabled    Boolean? @default(false)
 }
 
 model WordBlacklist {

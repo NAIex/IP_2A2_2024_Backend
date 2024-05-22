@@ -63,7 +63,7 @@ class AuthService {
             where: { email: email },
         });
 
-        if (user) throw createError.Forbidden('Email already used');
+        if (user) throw createError.Conflict('Email already used');
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
     

@@ -8,7 +8,7 @@ const router = Router();
 
 /**
  * @swagger
- * /register:
+ * /:
  *   post:
  *     summary: Register new user
  *     description: Creates a new user account.
@@ -31,11 +31,11 @@ const router = Router();
  *       '403':
  *         description: Email already registered
  */
-router.post('/register', user.register);
+router.post('/', user.register);
 /**
  * @swagger
- * /login:
- *   post:
+ * /:
+ *   put:
  *     summary: User login
  *     description: Logs in an existing user.
  *     requestBody:
@@ -59,19 +59,47 @@ router.post('/register', user.register);
  *       '404':
  *         description: User not found
  */
-router.post('/login', user.login);
+router.put('/', user.login);
 /**
  * @swagger
- * /logout:
- *   post:
+ * /:
+ *   patch:
  *     summary: User logout
  *     description: Logs out the current user.
  *     responses:
  *       '200':
  *         description: Logout successful
  */
-router.post('/logout', user.logout);
-router.post('/generateRandomName', user.generateRandomName);
+router.patch('/logout', user.logout);
+/**
+ * @swagger
+ * /randomName:
+ *   get:
+ *     summary: Generate random names
+ *     description: Generates a list of 15 names from which the user can choose when they log in.
+ *     requestBody:
+ *       required: 
+ *       content:
+ *         application/json:
+ *     responses:
+ *       '200':
+ *         description: Random names generated successfully
+ */
+router.get('/randomName', user.generateRandomName);
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Show all users
+ *     description: Shows all the users and admins registered on the platform, but only if you are logged in.
+ *     requestBody:
+ *       required: 
+ *       content:
+ *         application/json:
+ *     responses:
+ *       '200':
+ *         description: All users
+ */
 router.get('/', auth, user.all);
 
 export default router;
