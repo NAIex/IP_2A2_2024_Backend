@@ -153,3 +153,38 @@ export const deleteComment = async (req, res) => {
     res.status(500).json(e);
   }
 };
+
+
+export const likeComment = async (req, res) => {
+  const { commentId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    const commentExists = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!commentExists) {
+      res.status(404).send("Comment does not exist");
+      return;
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: { like: { increment: 1}},
+    });
+
+    res.status(204).send("Successfully liked the comment");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+

@@ -8,6 +8,7 @@ import {
   addDirectComment,
   addSubcomment,
   deleteComment,
+  likeComment,
 } from "../controllers/CommentController.js";
 import auth from "../middlewares/auth.js";
 
@@ -189,6 +190,43 @@ router.delete(
   auth,
   ErrorMiddleware,
   deleteComment
+);
+
+/** 
+ * @swagger
+ * /comment/likeComment:
+ *   post:
+ *     tags:
+ *       - Comment
+ *     summary: Like a comment
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               commentId:
+ *                 type: integer
+ *                 description: The ID of the comment to like
+ *     responses:
+ *       200:
+ *         description: Successfully liked the comment
+ *       404:
+ *         description: User or Comment does not exist
+ *       500:
+ *         description: Server error
+ */
+
+
+router.post(
+  "/likeComment",
+  body("commentId").notEmpty(),
+  auth,
+  ErrorMiddleware,
+  likeComment
 );
 
 export default router;
