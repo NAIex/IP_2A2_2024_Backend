@@ -114,3 +114,11 @@ model WordBlacklist {
   word      String    @unique
   dateAdded DateTime? @default(now())
 }
+
+model CommentsInteraction {
+  id  Int @id @default(autoincrement())
+  id_user Int
+  id_comment Int
+  is_liked Boolean
+  is_disliked Boolean 
+}

@@ -229,4 +229,41 @@ router.post(
   likeComment
 );
 
+/** 
+ * @swagger
+ * /comment/dislikeComment:
+ *   post:
+ *     tags:
+ *       - Comment
+ *     summary: Dislike a comment
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               commentId:
+ *                 type: integer
+ *                 description: The ID of the comment to like
+ *     responses:
+ *       200:
+ *         description: Successfully disliked the comment
+ *       404:
+ *         description: User or Comment does not exist
+ *       500:
+ *         description: Server error
+ */
+
+
+router.post(
+  "/dislikeComment",
+  body("commentId").notEmpty(),
+  auth,
+  ErrorMiddleware,
+  likeComment
+);
+
 export default router;
