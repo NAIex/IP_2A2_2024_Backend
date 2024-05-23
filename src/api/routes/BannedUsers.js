@@ -8,15 +8,15 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /ban
- *   description: API for banned management
+ *   name: Ban
+ *   description: API for mute management
  */
 
 /**
  * @swagger
- * /users:
+ * /ban/users:
  *   get:
- *     tags: [/ban]
+ *     tags: [Ban]
  *     summary: View all banned users
  *     description: Shows a list of all the banned users on the platform.
  *     responses:
@@ -28,6 +28,7 @@ router.get('/users', ban.viewBannedUsers);
  * @swagger
  * /ban:
  *   patch:
+ *     tags: [Ban]
  *     summary: Unban a user
  *     description: Changes a user's ban_status to false.
  *     requestBody:
@@ -41,17 +42,18 @@ router.get('/users', ban.viewBannedUsers);
  *                 type: integer
  *     responses:
  *       '200':
- *         description: User unbanned succesfully
+ *         description: User unmute succesfully
  *       '404':
  *         description: User not registered
  *       '406':
- *         description: User is not banned
+ *         description: User is not muted
  */
 router.patch('/', ban.unbanUser);
 /**
  * @swagger
  * /ban:
  *   put:
+ *     tags: [Ban]
  *     summary: Ban a user
  *     description: Changes a user's ban_status to true and sets their unban_date.
  *     requestBody:
@@ -77,7 +79,8 @@ router.put('/', ban.banUser);
 /**
  * @swagger
  * /ban/candidates:
- *   get:
+ *   put:
+ *     tags: [Ban]
  *     summary: View all users that are ban candidates
  *     description: Shows a list of all the users that could be banned by an admin in the future.
  *     responses:

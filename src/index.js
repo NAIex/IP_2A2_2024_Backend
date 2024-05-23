@@ -11,8 +11,9 @@ import WordBlacklist from "./api/routes/WordBlacklist.js";
 import Thread from "./api/routes/Thread.js";
 import Tag from "./api/routes/Tags.js"
 import Community from "./api/routes/Community.js";
+
 import BannedUsers from "./api/routes/BannedUsers.js";
-import MutedUsers from './api/routes/MutedUsers.js';
+import MutedUsers from "./api/routes/MutedUsers.js";
 
 const app = express();
 const port = 4000;
@@ -28,8 +29,9 @@ app.use("/community", Community);
 app.use("/thread", Thread);
 app.use("/auth", UserAuth);
 app.use("/tag", Tag);
+
 app.use("/ban", BannedUsers);
-app.use('/mute', MutedUsers);
+app.use("/mute", MutedUsers);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

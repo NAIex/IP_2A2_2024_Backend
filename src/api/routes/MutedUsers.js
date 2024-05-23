@@ -8,15 +8,15 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /mute
+ *   name: Mute
  *   description: API for mute management
  */
 
 /**
  * @swagger
- * /users:
+ * /mute/users:
  *   get:
- *     tags: [/mute]
+ *     tags: [Mute]
  *     summary: View all muted users
  *     description: Shows a list of all the muted users on the platform.
  *     responses:
@@ -26,9 +26,9 @@ const router = Router();
 router.get('/users', mute.viewMutedUsers);
 /**
  * @swagger
- * /:
+ * /mute:
  *   patch:
- *     tags: [/mute]
+ *     tags: [Mute]
  *     summary: Unmute a user
  *     description: Changes a user's mute_status to false.
  *     requestBody:
@@ -51,9 +51,9 @@ router.get('/users', mute.viewMutedUsers);
 router.patch('/', mute.unmuteUser);
 /**
  * @swagger
- * /:
+ * /mute:
  *   put:
- *     tags: [/mute]
+ *     tags: [Mute]
  *     summary: Mute a user
  *     description: Changes a user's mute_status to true, sets their unmute_date and 
  *          increases their warning count by 1.
@@ -79,9 +79,9 @@ router.patch('/', mute.unmuteUser);
 router.put('/', mute.muteUser);
 /**
  * @swagger
- * /candidates:
+ * /mute/candidates:
  *   get:
- *     tags: [/mute]
+ *     tags: [Mute]
  *     summary: View all users that are mute candidates
  *     description: Shows a list of all the users that could be muted by an admin in the future.
  *     responses:
