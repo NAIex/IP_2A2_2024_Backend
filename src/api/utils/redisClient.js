@@ -1,8 +1,8 @@
-import redis from "redis";
+// import redis from "redis";
 
-const client = redis.createClient({ url: "redis://localhost:6379" });
-client.on("error", (err) => console.log("Redis Client Error", err));
+// const client = redis.createClient({ url: "redis://localhost:6379" });
+// client.on("error", (err) => console.log("Redis Client Error", err));
 
-client.connect();
+// client.connect();
 
-export default client;
+// export default client;

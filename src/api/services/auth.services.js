@@ -210,13 +210,13 @@ class AuthService {
 
   // momentan nu merge
 
-  static async logout(token) {
-    const decoded = jwt.decode(token);
-    const expires = decoded.exp - Math.floor(Date.now() / 1000);
-    // await redisClient.set(`blacklisted:${token}`, "blacklisted", {
-    //   EX: expires,
-    // });
-  }
+  // static async logout(token) {
+  //   const decoded = jwt.decode(token);
+  //   const expires = decoded.exp - Math.floor(Date.now() / 1000);
+  //   await redisClient.set(`blacklisted:${token}`, "blacklisted", {
+  //     EX: expires,
+  //   });
+  // }
 
   static async all() {
     const allUsers = await prisma.User.findMany();
