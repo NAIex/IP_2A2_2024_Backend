@@ -4,10 +4,19 @@ import ErrorMiddleware from "../middlewares/ErrorMiddleware.js";
 import ban from "../controllers/BannedUsersController.js";
 
 const router = Router();
+
 /**
  * @swagger
- * /ban/users:
+ * tags:
+ *   name: /ban
+ *   description: API for banned management
+ */
+
+/**
+ * @swagger
+ * /users:
  *   get:
+ *     tags: [/ban]
  *     summary: View all banned users
  *     description: Shows a list of all the banned users on the platform.
  *     responses:
