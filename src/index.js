@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import swaggerUi from "swagger-ui-express";
 import specs from "./api/utils/swagger.js";
@@ -15,9 +16,13 @@ import Community from "./api/routes/Community.js";
 import BannedUsers from "./api/routes/BannedUsers.js";
 import MutedUsers from "./api/routes/MutedUsers.js";
 
+import Comment from "./api/routes/Comment.js";
+import Feed from "./api/routes/Feed.js";
+
 const app = express();
 const port = 4000;
 
+app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,11 +32,15 @@ app.use("/user", User);
 app.use("/", WordBlacklist);
 app.use("/community", Community);
 app.use("/thread", Thread);
+
 app.use("/auth", UserAuth);
 app.use("/tag", Tag);
 
 app.use("/ban", BannedUsers);
 app.use("/mute", MutedUsers);
+
+app.use("/comment", Comment);
+app.use("/feed", Feed);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
