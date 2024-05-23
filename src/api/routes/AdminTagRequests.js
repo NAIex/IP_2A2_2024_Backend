@@ -14,7 +14,7 @@ const router = Router();
 
 /**
  * @swagger
- * /:
+ * /adminTag:
  *   get:
  *     tags: [/adminTag]
  *     summary: View all tag requests
@@ -26,7 +26,7 @@ const router = Router();
 router.get('/', adminTag.viewTagRequests);
 /**
  * @swagger
- * /:
+ * /adminTag:
  *   post:
  *     tags: [/adminTag]
  *     summary: Approve a tag request
@@ -51,7 +51,7 @@ router.get('/', adminTag.viewTagRequests);
 router.post('/', adminTag.approveTag);
 /**
  * @swagger
- * /:
+ * /adminTag:
  *   delete:
  *     tags: [/adminTag]
  *     summary: Reject a tag request
