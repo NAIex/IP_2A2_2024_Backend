@@ -29,11 +29,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/user", User);
-app.use("/", WordBlacklist);
+app.use("/blacklist", WordBlacklist);
 app.use("/community", Community);
 app.use("/thread", Thread);
 
-app.use("/auth", UserAuth);
+app.use("/", UserAuth);
 app.use("/tag", Tag);
 
 app.use("/ban", BannedUsers);

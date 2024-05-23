@@ -9,7 +9,7 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /auth
+ *   name: Auth
  *   description: API for auth management
  */
 
@@ -17,7 +17,7 @@ const router = Router();
  * @swagger
  * /register:
  *   post:
- *     tags: [/auth]
+ *     tags: [Auth]
  *     summary: Register new user
  *     description: Creates a new user account.
  *     requestBody:
@@ -44,7 +44,7 @@ router.post('/register', user.register);
  * @swagger
  * /login:
  *   post:
- *     tags: [/auth]
+ *     tags: [Auth]
  *     summary: User login
  *     description: Logs in an existing user.
  *     requestBody:
@@ -76,7 +76,7 @@ router.post('/login', user.login);
  * @swagger
  * /names:
  *   get:
- *     tags: [/auth]
+ *     tags: [Auth]
  *     summary: Generate random names
  *     description: Generates a list of 15 names from which the user can choose when they log in.
  *     requestBody:
