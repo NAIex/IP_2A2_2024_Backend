@@ -11,9 +11,8 @@ class authController {
                 data: user
             });
         } catch (e) {
-            next(e);
             console.log(e);
-            res.send(e);
+            next(e);
         }
     };
 
@@ -26,9 +25,9 @@ class authController {
                 data
             });
         } catch (e) {
-            next(e);
             console.log(e);
-            res.send(e);
+            next(e);
+            // res.send(e);
         }
     };
 
