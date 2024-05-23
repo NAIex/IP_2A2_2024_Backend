@@ -14,15 +14,15 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /thread
+ *   name: Thread
  *   description: API for thread management
  */
 
 /**
  * @swagger
- * /:
+ * /thread:
  *   get:
- *     tags: [/thread]
+ *     tags: [Thread]
  *     summary: Return all threads
  *     security:
  *       - bearerAuth: []
@@ -34,9 +34,9 @@ router.get("/", auth, getThreads);
 
 /**
  * @swagger
- * /community:
+ * /thread/community:
  *   get:
- *     tags: [/thread]
+ *     tags: [Thread]
  *     summary: Return all threads and their communities
  *     security:
  *       - bearerAuth: []
@@ -48,9 +48,9 @@ router.get("/community", auth, getThreadCommunity);
 
 /**
  * @swagger
- * /:
+ * /thread:
  *   post:
- *     tags: [/thread]
+ *     tags: [Thread]
  *     summary: Add a new thread
  *     security:
  *       - bearerAuth: []
@@ -99,9 +99,9 @@ router.post(
 
 /**
  * @swagger
- * /:
+ * /thread:
  *   delete:
- *     tags: [/thread]
+ *     tags: [Thread]
  *     summary: Remove a thread
  *     security:
  *       - bearerAuth: []

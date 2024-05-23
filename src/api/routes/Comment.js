@@ -16,15 +16,15 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /comment
+ *   name: Comment
  *   description: API for comments management
  */
 
 /**
  * @swagger
- * :
+ * /comment:
  *   get:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Return all comments
  *     security:
  *       - bearerAuth: []
@@ -35,9 +35,9 @@ const router = Router();
 router.get("/", auth, getComments);
 /**
  * @swagger
- * /direct:
+ * /comment/direct:
  *   get:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Return all direct comments on threads
  *     security:
  *       - bearerAuth: []
@@ -49,9 +49,9 @@ router.get("/direct", auth, getThreadDirectComments);
 
 /**
  * @swagger
- * /subcomment:
+ * /comment/subcomment:
  *   get:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Return all subcomments
  *     security:
  *       - bearerAuth: []
@@ -63,9 +63,9 @@ router.get("/subcomment", auth, getCommentSubcomment);
 
 /**
  * @swagger
- * :
+ * /comment:
  *   post:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Add a new direct comment
  *     security:
  *       - bearerAuth: []
@@ -106,9 +106,9 @@ router.post(
 
 /**
  * @swagger
- * /subcomment:
+ * /comment/subcomment:
  *   post:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Add a new subcomment
  *     security:
  *       - bearerAuth: []
@@ -154,9 +154,9 @@ router.post(
 
 /**
  * @swagger
- * :
+ * /comment:
  *   delete:
- *     tags: [/comment]
+ *     tags: [Comment]
  *     summary: Remove a comment
  *     security:
  *       - bearerAuth: []

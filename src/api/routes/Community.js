@@ -17,16 +17,16 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /community
+ *   name: Community
  *   description: API for community management
  */
 // only  for debbuging
 
 /**
  * @swagger
- * /:
+ * /community:
  *   get:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Return all communities
  *     security:
  *       - bearerAuth: []
@@ -38,9 +38,9 @@ router.get("/", auth, getCommunity);
 
 /**
  * @swagger
- * /user:
+ * /community/user:
  *   get:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Return all communities and their users
  *     security:
  *       - bearerAuth: []
@@ -52,9 +52,9 @@ router.get("/user", auth, getUserCommunity);
 
 /**
  * @swagger
- * /:
+ * /community:
  *   post:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Add a new community
  *     security:
  *       - bearerAuth: []
@@ -86,9 +86,9 @@ router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
 
 /**
  * @swagger
- * /:
+ * /community:
  *   delete:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Remove a community
  *     security:
  *       - bearerAuth: []
@@ -124,9 +124,9 @@ router.delete(
 
 /**
  * @swagger
- * /user:
+ * /community/user:
  *   post:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Add a user to a community
  *     security:
  *       - bearerAuth: []
@@ -159,9 +159,9 @@ router.post(
 );
 /**
  * @swagger
- * /user:
+ * /community/user:
  *   delete:
- *     tags: [/community]
+ *     tags: [Community]
  *     summary: Remove a user from a community
  *     security:
  *       - bearerAuth: []

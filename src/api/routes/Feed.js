@@ -9,15 +9,15 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   name: /feed
+ *   name: Feed
  *   description: API for feed management
  */
 
 /**
  * @swagger
- * :
+ * /feed:
  *   get:
- *     tags: [/feed]
+ *     tags: [Feed]
  *     summary: Get user feed
  *     security:
  *       - bearerAuth: []
