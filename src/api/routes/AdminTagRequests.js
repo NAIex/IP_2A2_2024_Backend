@@ -4,10 +4,19 @@ import ErrorMiddleware from "../middlewares/ErrorMiddleware.js";
 import adminTag from "../controllers/AdminTagRequestController.js";
 
 const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: /adminTag
+ *   description: API for tags-admin side management
+ */
+
 /**
  * @swagger
  * /:
  *   get:
+ *     tags: [/adminTag]
  *     summary: View all tag requests
  *     description: Shows a list of all the banned users on the platform.
  *     responses:
@@ -19,6 +28,7 @@ router.get('/', adminTag.viewTagRequests);
  * @swagger
  * /:
  *   post:
+ *     tags: [/adminTag]
  *     summary: Approve a tag request
  *     description: Adds a tag that was requested by a user into the tag list and removes it from the tag request list.
  *     requestBody:
@@ -43,6 +53,7 @@ router.post('/', adminTag.approveTag);
  * @swagger
  * /:
  *   delete:
+ *     tags: [/adminTag]
  *     summary: Reject a tag request
  *     description: Delete a tag request from the tag request list.
  *     requestBody:
