@@ -79,7 +79,7 @@ router.put('/', ban.banUser);
 /**
  * @swagger
  * /ban/candidates:
- *   put:
+ *   get:
  *     tags: [Ban]
  *     summary: View all users that are ban candidates
  *     description: Shows a list of all the users that could be banned by an admin in the future.
