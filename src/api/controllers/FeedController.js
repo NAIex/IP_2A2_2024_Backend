@@ -30,7 +30,7 @@ export const getUserFeed = async (req, res) => {
         });
         const community = await prisma.community.findUnique({
           where: { id: communityThread.community_id },
-          select: { name: true }, // Select only the community title
+          select: { name: true },
         });
         return {
           ...thread,

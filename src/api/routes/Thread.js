@@ -17,18 +17,29 @@ const router = Router();
  *   name: Thread
  *   description: API for thread management
  */
-
 /**
  * @swagger
  * /thread:
  *   get:
  *     tags: [Thread]
- *     summary: Return all threads
+ *     summary: Return all threads or a specific thread
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve
  *     responses:
  *       200:
- *         description: A list of threads
+ *         description: A list of threads or a specific thread
+ *       401:
+ *         description: Permission denied! User is not a member of the community.
+ *       404:
+ *         description: User or Thread does not exist
+ *       500:
+ *         description: Server error
  */
 router.get("/", auth, getThreads);
 

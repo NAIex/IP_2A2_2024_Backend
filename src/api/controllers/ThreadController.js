@@ -1,8 +1,52 @@
 import prisma from "../../prisma/index.js";
 
 export const getThreads = async (req, res) => {
-  const threads = await prisma.Thread.findMany();
-  res.send(threads);
+  const { id } = req.query;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  let data;
+  try {
+    if (id) {
+      const threadId = Number(id);
+      const user = await prisma.user.findUnique({
+        where: { id: userId, email: userEmail },
+      });
+      if (!user) {
+        res.status(404).send("User does not exist");
+        return;
+      }
+      data = await prisma.thread.findUnique({
+        where: { id: threadId },
+      });
+      if (!data) {
+        res.status(404).send("Thread does not exist");
+        return;
+      }
+      const community = await prisma.communityThread.findUnique({
+        where: { thread_id: threadId },
+      });
+
+      const userJoinCommunity = await prisma.communityUser.findMany({
+        where: { user_id: userId, community_id: community.id },
+      });
+      if (!userJoinCommunity.length) {
+        res
+          .status(401)
+          .send("Permission denied! User is not a member of the community.");
+        return;
+      }
+      const communityName = await prisma.community.findUnique({
+        where: { id: community.id },
+        select: { name: true },
+      });
+      data = { ...data, communityTitle: communityName.name };
+    } else {
+      data = await prisma.thread.findMany();
+    }
+    res.send(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 };
 
 export const getThreadCommunity = async (req, res) => {
@@ -83,7 +127,7 @@ export const removeThread = async (req, res) => {
     const thread = await prisma.thread.delete({
       where: { id: removeThreadId },
     });
-    const deleteThreadCommunity = await prisma.CommunityThread.deleteMany({
+    const deleteThreadCommunity = await prisma.communityThread.deleteMany({
       where: { thread_id: removeThreadId },
     });
 
