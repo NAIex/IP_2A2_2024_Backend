@@ -23,6 +23,10 @@ export const addCommunity = async (req, res) => {
       res.status(404).send("User does not exist");
       return;
     }
+    if (!req.user.isAdmin) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
     const community = await prisma.community.create({
       data: { author_id: userId, name, description },
     });
@@ -52,11 +56,11 @@ export const removeCommunity = async (req, res) => {
       return;
     }
 
-    const userIsAuthor = await prisma.community.findUnique({
-      where: { id: removeCommunityId, author_id: userId },
-    });
+    // const userIsAuthor = await prisma.community.findUnique({
+    //   where: { id: removeCommunityId, author_id: userId },
+    // });
 
-    if (!userIsAuthor && !req.user.isAdmin) {
+    if (!req.user.isAdmin) {
       res.status(401).send("Unauthorized");
       return;
     }
