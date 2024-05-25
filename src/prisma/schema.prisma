@@ -7,26 +7,21 @@ datasource db {
   url      = "postgresql://backend_dev:i am become death@ip-db-01.cl2wwmyu6vjw.eu-central-1.rds.amazonaws.com:5432/aot"
 }
 
-model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String         @db.VarChar(60)
-  user_type      String         @default("user")
-  ban_status     Boolean?       @default(false)
-  unbanned_date  DateTime?
-  mute_status    Boolean        @default(false)
-  unmute_date    DateTime?
-  random_name    String?        @db.VarChar(50)
-  warnings_count Int
-  Notification   Notification[]
+model Comment {
+  id        Int     @id @default(autoincrement())
+  content   String  @db.VarChar(255)
+  author_id Int
+  like      Int     @default(0)
+  dislike   Int     @default(0)
+  deleted   Boolean @default(false)
 }
 
-model CommunityUser {
-  id           Int @id @default(autoincrement())
-  user_id      Int
-  community_id Int
+model CommentSubcomment {
+  id            Int @id @default(autoincrement())
+  comment_id    Int
+  subcomment_id Int
 
-  @@unique([user_id, community_id])
+  @@unique([comment_id, subcomment_id])
 }
 
 model Community {
@@ -38,43 +33,30 @@ model Community {
   disabled    Boolean? @default(false)
 }
 
-model WordBlacklist {
-  id        Int       @id @default(autoincrement())
-  word      String    @unique
-  dateAdded DateTime? @default(now())
-}
-
-model Comment {
-  id        Int    @id @default(autoincrement())
-  content   String @db.VarChar(255)
-  author_id Int
-  like      Int    @default(0)
-  dislike   Int    @default(0)
-}
-
-model CommentSubcomment {
-  id            Int @id @default(autoincrement())
-  comment_id    Int
-  subcomment_id Int
-
-  @@unique([comment_id, subcomment_id])
-}
-
 model CommunityThread {
   id           Int @id @default(autoincrement())
   community_id Int
-  thread_id    Int
+  thread_id    Int @unique
 
   @@unique([community_id, thread_id])
 }
 
+model CommunityUser {
+  id           Int @id @default(autoincrement())
+  user_id      Int
+  community_id Int
+
+  @@unique([user_id, community_id])
+}
+
 model Notification {
-  notification_id Int      @id @default(autoincrement())
+  notification_id Int              @id @default(autoincrement())
   user_ID         Int
-  type            String   @db.VarChar(30)
+  type            notifType
+  tagName         String?          @db.VarChar(50)
   time_sent       DateTime
-  opened          Boolean? @default(false)
-  User            User     @relation(fields: [user_ID], references: [id])
+  opened          Boolean?         @default(false)
+  User            User             @relation(fields: [user_ID], references: [id])
 }
 
 model Tag {
@@ -101,7 +83,7 @@ model Thread {
 model ThreadDirectComments {
   id         Int @id @default(autoincrement())
   thread_id  Int
-  comment_id Int
+  comment_id Int @unique
 
   @@unique([comment_id, thread_id])
 }
@@ -112,4 +94,31 @@ model ThreadTag {
   thread_id Int
 
   @@unique([thread_id, tag_id])
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String         @db.VarChar(60)
+  user_type      String         @default("user")
+  ban_status     Boolean?       @default(false)
+  unbanned_date  DateTime?
+  mute_status    Boolean        @default(false)
+  unmute_date    DateTime?
+  random_name    String?        @db.VarChar(50)
+  warnings_count Int
+  Notification   Notification[]
+}
+
+model WordBlacklist {
+  id        Int       @id @default(autoincrement())
+  word      String    @unique
+  dateAdded DateTime? @default(now())
+}
+
+enum notifType {
+  MUTE
+  UNMUTE
+  TAG_REQ_REJECTED
+  TAG_REQ_ACCEPTED
 }
