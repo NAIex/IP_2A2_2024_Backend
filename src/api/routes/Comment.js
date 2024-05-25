@@ -35,7 +35,7 @@ const router = Router();
 router.get("/", auth, getComments);
 /**
  * @swagger
- * /direct:
+ * comment/direct:
  *   get:
  *     tags: [Comment]
  *     summary: Return all direct comments on threads or a specific thread's direct comments
@@ -60,7 +60,7 @@ router.get("/", auth, getComments);
 router.get("/direct", auth, getThreadDirectComments);
 /**
  * @swagger
- * /subcomment:
+ * comment/subcomment:
  *   get:
  *     tags: [Comment]
  *     summary: Return all subcomments or a specific comment's subcomments
