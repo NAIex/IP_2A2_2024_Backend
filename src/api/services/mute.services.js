@@ -1,5 +1,6 @@
 import createError from "http-errors";
 import prisma from "../../prisma/index.js";
+import { notifType } from "@prisma/client";
 
 class MuteService {
 
@@ -46,7 +47,7 @@ class MuteService {
             },
         });
 
-        this.sendMuteNotification(user.id, "unmute");
+        this.sendMuteNotification(user.id, notifType.UNMUTE);
 
         return user;
     }
@@ -95,7 +96,7 @@ class MuteService {
             },
         });
 
-        this.sendMuteNotification(user.id, "mute");
+        this.sendMuteNotification(user.id, notifType.MUTE);
 
         return user;
     }
