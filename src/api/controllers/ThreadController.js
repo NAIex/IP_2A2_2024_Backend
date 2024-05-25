@@ -15,6 +15,7 @@ export const getThreads = async (req, res) => {
         res.status(404).send("User does not exist");
         return;
       }
+
       data = await prisma.thread.findUnique({
         where: { id: threadId },
       });
@@ -27,7 +28,7 @@ export const getThreads = async (req, res) => {
       });
 
       const userJoinCommunity = await prisma.communityUser.findMany({
-        where: { user_id: userId, community_id: community.id },
+        where: { user_id: userId, community_id: community.community_id },
       });
       if (!userJoinCommunity.length) {
         res

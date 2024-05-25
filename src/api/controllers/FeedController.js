@@ -1,4 +1,5 @@
 import prisma from "../../prisma/index.js";
+
 export const getUserFeed = async (req, res) => {
   const userId = req.user.userId;
   const userEmail = req.user.email;
@@ -30,7 +31,7 @@ export const getUserFeed = async (req, res) => {
         });
         const community = await prisma.community.findUnique({
           where: { id: communityThread.community_id },
-          select: { name: true },
+          select: { id: true, name: true },
         });
         return {
           ...thread,
