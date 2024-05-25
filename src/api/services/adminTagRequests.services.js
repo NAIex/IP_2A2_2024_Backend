@@ -54,8 +54,6 @@ class adminTagRequestsService {
         await model.delete({
             where: { id: id }
         });
-
-        return newTag;
     }
 }
 
