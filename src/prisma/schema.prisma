@@ -82,7 +82,7 @@ model Thread {
 model ThreadDirectComments {
   id         Int @id @default(autoincrement())
   thread_id  Int
-  comment_id Int
+  comment_id Int @unique
 
   @@unique([comment_id, thread_id])
 }

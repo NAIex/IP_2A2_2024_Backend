@@ -35,29 +35,52 @@ const router = Router();
 router.get("/", auth, getComments);
 /**
  * @swagger
- * /comment/direct:
+ * /direct:
  *   get:
  *     tags: [Comment]
- *     summary: Return all direct comments on threads
+ *     summary: Return all direct comments on threads or a specific thread's direct comments
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve direct comments for
  *     responses:
  *       200:
  *         description: A list of direct comments on threads
+ *       401:
+ *         description: Permission denied! User is not a member of the community.
+ *       404:
+ *         description: User or Thread does not exist
+ *       500:
+ *         description: Server error
  */
 router.get("/direct", auth, getThreadDirectComments);
-
 /**
  * @swagger
- * /comment/subcomment:
+ * /subcomment:
  *   get:
  *     tags: [Comment]
- *     summary: Return all subcomments
+ *     summary: Return all subcomments or a specific comment's subcomments
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         description: The ID of the comment to retrieve subcomments for
  *     responses:
  *       200:
  *         description: A list of subcomments
+ *       401:
+ *         description: Permission denied! User is not a member of the community.
+ *       404:
+ *         description: User or Comment does not exist
+ *       500:
+ *         description: Server error
  */
 router.get("/subcomment", auth, getCommentSubcomment);
 

@@ -6,13 +6,119 @@ export const getComments = async (req, res) => {
 };
 
 export const getThreadDirectComments = async (req, res) => {
-  const threadDirectComments = await prisma.ThreadDirectComments.findMany();
-  res.send(threadDirectComments);
+  const { id } = req.query;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  let data;
+  try {
+    if (id) {
+      const threadId = Number(id);
+      const user = await prisma.user.findUnique({
+        where: { id: userId, email: userEmail },
+      });
+      if (!user) {
+        res.status(404).send("User does not exist");
+        return;
+      }
+
+      data = await prisma.thread.findUnique({
+        where: { id: threadId },
+      });
+      if (!data) {
+        res.status(404).send("Thread does not exist");
+        return;
+      }
+      const community = await prisma.communityThread.findUnique({
+        where: { thread_id: threadId },
+      });
+
+      const userJoinCommunity = await prisma.communityUser.findMany({
+        where: { user_id: userId, community_id: community.community_id },
+      });
+      if (!userJoinCommunity.length) {
+        res
+          .status(401)
+          .send("Permission denied! User is not a member of the community.");
+        return;
+      }
+      const commentsThread = await prisma.threadDirectComments.findMany({
+        where: { thread_id: threadId },
+        select: { comment_id: true },
+      });
+
+      const commentIds = commentsThread.map((c) => c.comment_id);
+      data = await prisma.comment.findMany({
+        where: {
+          id: { in: commentIds },
+        },
+      });
+    } else {
+      data = await prisma.threadDirectComments.findMany();
+    }
+    res.send(data);
+  } catch (e) {
+    res.status(500).json(e);
+  }
 };
 
 export const getCommentSubcomment = async (req, res) => {
-  const commentsSubcomments = await prisma.CommentSubcomment.findMany();
-  res.send(commentsSubcomments);
+  const { id } = req.query;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  let data;
+  try {
+    if (id) {
+      const commentId = Number(id);
+      const user = await prisma.user.findUnique({
+        where: { id: userId, email: userEmail },
+      });
+      if (!user) {
+        res.status(404).send("User does not exist");
+        return;
+      }
+
+      const comment = await prisma.comment.findUnique({
+        where: { id: commentId },
+      });
+      if (!comment) {
+        res.status(404).send("Comment does not exist");
+        return;
+      }
+      const thread = await prisma.threadDirectComments.findUnique({
+        where: { comment_id: commentId },
+      });
+
+      const community = await prisma.communityThread.findUnique({
+        where: { thread_id: thread.thread_id },
+      });
+
+      const userJoinCommunity = await prisma.communityUser.findMany({
+        where: { user_id: userId, community_id: community.community_id },
+      });
+      if (!userJoinCommunity.length) {
+        res
+          .status(401)
+          .send("Permission denied! User is not a member of the community.");
+        return;
+      }
+      const subcommentsComment = await prisma.commentSubcomment.findMany({
+        where: { comment_id: commentId },
+        select: { subcomment_id: true },
+      });
+
+      const subcommentIds = subcommentsComment.map((c) => c.subcomment_id);
+      data = await prisma.comment.findMany({
+        where: {
+          id: { in: subcommentIds },
+        },
+      });
+    } else {
+      data = await prisma.commentSubcomment.findMany();
+    }
+    res.send(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 };
 
 export const addDirectComment = async (req, res) => {
