@@ -9,6 +9,7 @@ import {
   addUserToCommunity,
   removeUserFromCommunity,
   turnOffCommunity,
+  getCommunityThreads,
 } from "../controllers/CommunityController.js";
 import auth from "../middlewares/auth.js";
 
@@ -209,5 +210,31 @@ router.patch(
   ErrorMiddleware,
   turnOffCommunity
 );
+
+/**
+ * @swagger
+ * community/{id}/threads:
+ *   get:
+ *     tags: [Community]
+ *     summary: Return all threads for a specific community
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the community
+ *     responses:
+ *       200:
+ *         description: A list of threads for the specified community
+ *       404:
+ *         description: User or Community does not exist
+ *       500:
+ *         description: Server error
+ */
+
+router.get("/:id/threads", auth, getCommunityThreads);
 
 export default router;

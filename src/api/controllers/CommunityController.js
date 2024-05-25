@@ -201,3 +201,38 @@ export const turnOffCommunity = async (req, res) => {
     res.status(500).json(e);
   }
 };
+
+export const getCommunityThreads = async (req, res) => {
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  const communityId = Number(req.params.id);
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+    const communityExists = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!communityExists) {
+      res.status(404).send("Community does not exist");
+      return;
+    }
+    const communityThreads = await prisma.communityThread.findMany({
+      where: { community_id: communityId },
+      select: { thread_id: true },
+    });
+    const communityIds = communityThreads.map((c) => c.thread_id);
+    const threads = await prisma.thread.findMany({
+      where: {
+        id: { in: communityIds },
+      },
+    });
+    res.status(200).json(threads);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
