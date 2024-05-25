@@ -50,12 +50,13 @@ model CommunityUser {
 }
 
 model Notification {
-  notification_id Int      @id @default(autoincrement())
+  notification_id Int       @id @default(autoincrement())
   user_ID         Int
-  type            String   @db.VarChar(30)
   time_sent       DateTime
-  opened          Boolean? @default(false)
-  User            User     @relation(fields: [user_ID], references: [id])
+  opened          Boolean?  @default(false)
+  tagName         String?   @db.VarChar(50)
+  type            notifType
+  User            User      @relation(fields: [user_ID], references: [id])
 }
 
 model Tag {
@@ -113,4 +114,11 @@ model WordBlacklist {
   id        Int       @id @default(autoincrement())
   word      String    @unique
   dateAdded DateTime? @default(now())
+}
+
+enum notifType {
+  MUTE
+  UNMUTE
+  TAG_REQ_REJECTED
+  TAG_REQ_ACCEPTED
 }
