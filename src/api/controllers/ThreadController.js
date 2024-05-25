@@ -37,7 +37,7 @@ export const getThreads = async (req, res) => {
         return;
       }
       const communityName = await prisma.community.findUnique({
-        where: { id: community.id },
+        where: { id: community.community_id },
         select: { name: true },
       });
       data = { ...data, communityTitle: communityName.name };
