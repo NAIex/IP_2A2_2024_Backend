@@ -230,6 +230,9 @@ export const getCommunityThreads = async (req, res) => {
       where: {
         id: { in: communityIds },
       },
+      orderBy: {
+        creation_time: "desc",
+      },
     });
     res.status(200).json(threads);
   } catch (e) {

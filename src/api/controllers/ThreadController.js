@@ -181,6 +181,9 @@ export const getDirectComments = async (req, res) => {
       where: {
         id: { in: commentIds },
       },
+      orderBy: {
+        creation_time: "desc",
+      },
     });
 
     res.send(data);
