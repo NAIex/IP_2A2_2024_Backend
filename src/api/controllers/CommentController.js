@@ -38,7 +38,7 @@ export const getThreadDirectComments = async (req, res) => {
       });
       if (!userJoinCommunity.length) {
         res
-          .status(401)
+          .status(403)
           .send("Permission denied! User is not a member of the community.");
         return;
       }
@@ -98,7 +98,7 @@ export const getCommentSubcomment = async (req, res) => {
       });
       if (!userJoinCommunity.length) {
         res
-          .status(401)
+          .status(403)
           .send("Permission denied! User is not a member of the community.");
         return;
       }
@@ -151,7 +151,7 @@ export const addDirectComment = async (req, res) => {
 
     if (!userJoinCommunity.length) {
       res
-        .status(401)
+        .status(403)
         .send("Permission denied! User is not a member of the community.");
       return;
     }
@@ -211,7 +211,7 @@ export const addSubcomment = async (req, res) => {
     });
     if (!userJoinCommunity.length) {
       res
-        .status(401)
+        .status(403)
         .send("Permission denied! User is not a member of the community.");
       return;
     }
@@ -262,7 +262,7 @@ export const deleteComment = async (req, res) => {
     });
 
     if (!userIsAuthor && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 

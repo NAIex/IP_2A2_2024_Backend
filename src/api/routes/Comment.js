@@ -50,7 +50,7 @@ router.get("/", auth, getComments);
  *     responses:
  *       200:
  *         description: A list of direct comments on threads
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Thread does not exist
@@ -75,7 +75,7 @@ router.get("/direct", auth, getThreadDirectComments);
  *     responses:
  *       200:
  *         description: A list of subcomments
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Comment does not exist
@@ -113,7 +113,7 @@ router.get("/subcomment", auth, getCommentSubcomment);
  *         description: Successfully added comment
  *       404:
  *         description: User or Thread does not exist
- *       401:
+ *       403:
  *         description: Permission denied
  *       500:
  *         description: Server error
@@ -160,7 +160,7 @@ router.post(
  *         description: Successfully added subcomment
  *       404:
  *         description: User, Comment, or Thread does not exist
- *       401:
+ *       403:
  *         description: Permission denied
  *       500:
  *         description: Server error
@@ -198,8 +198,8 @@ router.post(
  *     responses:
  *       204:
  *         description: Successfully removed thread
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Comment does not exist
  *       500:

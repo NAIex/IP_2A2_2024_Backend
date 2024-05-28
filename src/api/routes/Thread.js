@@ -34,7 +34,7 @@ const router = Router();
  *     responses:
  *       200:
  *         description: A list of threads or a specific thread
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Thread does not exist
@@ -92,7 +92,7 @@ router.get("/community", auth, getThreadCommunity);
  *     responses:
  *       201:
  *         description: Successfully created thread
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Community does not exist
@@ -131,8 +131,8 @@ router.post(
  *     responses:
  *       204:
  *         description: Successfully removed thread
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Thread does not exist
  *       500:

@@ -33,7 +33,7 @@ export const getThreads = async (req, res) => {
       });
       if (!userJoinCommunity.length) {
         res
-          .status(401)
+          .status(403)
           .send("Permission denied! User is not a member of the community.");
         return;
       }
@@ -80,7 +80,7 @@ export const addThread = async (req, res) => {
     });
     if (!userJoinCommunity.length) {
       res
-        .status(401)
+        .status(403)
         .send("Permission denied! User is not a member of the community.");
       return;
     }
@@ -139,7 +139,7 @@ export const removeThread = async (req, res) => {
     });
 
     if (!userIsAuthor && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
