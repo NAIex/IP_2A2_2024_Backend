@@ -50,13 +50,13 @@ model CommunityUser {
 }
 
 model Notification {
-  notification_id Int              @id @default(autoincrement())
+  notification_id Int       @id @default(autoincrement())
   user_ID         Int
-  type            notifType
-  tagName         String?          @db.VarChar(50)
   time_sent       DateTime
-  opened          Boolean?         @default(false)
-  User            User             @relation(fields: [user_ID], references: [id])
+  opened          Boolean?  @default(false)
+  tagName         String?   @db.VarChar(50)
+  type            notifType
+  User            User      @relation(fields: [user_ID], references: [id])
 }
 
 model Tag {

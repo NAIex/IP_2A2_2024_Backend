@@ -8,8 +8,16 @@ const router = Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Auth
+ *   description: API for auth management
+ */
+
+/**
+ * @swagger
  * /register:
  *   post:
+ *     tags: [Auth]
  *     summary: Register new user
  *     description: Creates a new user account.
  *     requestBody:
@@ -36,6 +44,7 @@ router.post('/register', user.register);
  * @swagger
  * /login:
  *   post:
+ *     tags: [Auth]
  *     summary: User login
  *     description: Logs in an existing user.
  *     requestBody:
@@ -60,18 +69,26 @@ router.post('/register', user.register);
  *         description: User not found
  */
 router.post('/login', user.login);
+
+//router.post('/logout', user.logout);
+
 /**
  * @swagger
- * /logout:
- *   post:
- *     summary: User logout
- *     description: Logs out the current user.
+ * /names:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Generate random names
+ *     description: Generates a list of 15 names from which the user can choose when they log in.
+ *     requestBody:
+ *       required: 
+ *       content:
+ *         application/json:
  *     responses:
  *       '200':
- *         description: Logout successful
+ *         description: Random names generated successfully
  */
-router.post('/logout', user.logout);
-router.post('/generateRandomName', user.generateRandomName);
-router.get('/', auth, user.all);
+router.get('/names', user.generateRandomNames);
+
+//router.get('/', auth, user.all);
 
 export default router;
