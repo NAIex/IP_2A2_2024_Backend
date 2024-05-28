@@ -108,7 +108,7 @@ export const addThread = async (req, res) => {
       });
     });
 
-    res.status(201).send("Successfully add thread");
+    res.status(201).send({ message: "Successfully add thread", id: thread.id });
   } catch (e) {
     res.status(500).json(e);
   }

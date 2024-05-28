@@ -171,7 +171,9 @@ export const addDirectComment = async (req, res) => {
         commentContent: content,
       },
     });
-    res.status(201).send("Successfully add comment");
+    res
+      .status(201)
+      .send({ message: "Successfully add comment", id: comment.id });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -192,7 +194,10 @@ export const addSubcomment = async (req, res) => {
     const commentExists = await prisma.comment.findUnique({
       where: { id: commentId },
     });
-    if (!commentExists) {
+    const commenThreadtExists = await prisma.threadDirectComments.findUnique({
+      where: { thread_id: threadId, comment_id: commentId },
+    });
+    if (!commentExists || !commenThreadtExists) {
       res.status(404).send("Comment does not exist");
       return;
     }
@@ -230,7 +235,9 @@ export const addSubcomment = async (req, res) => {
         commentContent: content,
       },
     });
-    res.status(201).send("Successfully add comment");
+    res
+      .status(201)
+      .send({ message: "Successfully add subcomment", id: comment.id });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

@@ -26,7 +26,10 @@ export const addCommunity = async (req, res) => {
     const community = await prisma.community.create({
       data: { author_id: userId, name, description },
     });
-    res.status(201).send("Successfully created community");
+    res.status(201).json({
+      message: "Successfully created community",
+      id: community.id,
+    });
   } catch (e) {
     res.status(500).json(e);
   }
