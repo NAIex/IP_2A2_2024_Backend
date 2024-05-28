@@ -6,6 +6,7 @@ import {
   getThreadCommunity,
   getThreads,
   removeThread,
+  getDirectComments,
 } from "../controllers/ThreadController.js";
 import auth from "../middlewares/auth.js";
 
@@ -145,5 +146,32 @@ router.delete(
   ErrorMiddleware,
   removeThread
 );
+
+/**
+ * @swagger
+ * /thread/{id}/comments:
+ *   get:
+ *     tags: [Thread]
+ *     summary: Return direct comments for a specific thread
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve comments for
+ *     responses:
+ *       200:
+ *         description: A list of direct comments for the specified thread
+ *       403:
+ *         description: Permission denied! User is not a member of the community.
+ *       404:
+ *         description: User or Thread does not exist
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id/comments", auth, getDirectComments);
 
 export default router;

@@ -4,7 +4,8 @@ import ErrorMiddleware from "../middlewares/ErrorMiddleware.js";
 import {
   getComments,
   getThreadDirectComments,
-  getCommentSubcomment,
+  getCommentsSubcomments,
+  getSubcomments,
   addDirectComment,
   addSubcomment,
   deleteComment,
@@ -38,22 +39,14 @@ router.get("/", auth, getComments);
  * comment/direct:
  *   get:
  *     tags: [Comment]
- *     summary: Return all direct comments on threads or a specific thread's direct comments
+ *     summary: Return all direct comments on threads
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: id
- *         schema:
- *           type: integer
- *         description: The ID of the thread to retrieve direct comments for
  *     responses:
  *       200:
- *         description: A list of direct comments on threads
- *       401:
- *         description: Permission denied! User is not a member of the community.
+ *         description: A list of comments
  *       404:
- *         description: User or Thread does not exist
+ *         description: User does not exist
  *       500:
  *         description: Server error
  */
@@ -63,26 +56,45 @@ router.get("/direct", auth, getThreadDirectComments);
  * comment/subcomment:
  *   get:
  *     tags: [Comment]
- *     summary: Return all subcomments or a specific comment's subcomments
+ *     summary: Return all subcomments
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of comments
+ *       404:
+ *         description: User does not exist
+ *       500:
+ *         description: Server error
+ */
+router.get("/subcomment", auth, getCommentsSubcomments);
+
+/**
+ * @swagger
+ * /comment/{id}/subcomments:
+ *   get:
+ *     tags: [Comment]
+ *     summary: Return all subcomments for a specific comment
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: integer
  *         description: The ID of the comment to retrieve subcomments for
  *     responses:
  *       200:
- *         description: A list of subcomments
- *       401:
+ *         description: A list of subcomments for the specified comment
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Comment does not exist
  *       500:
  *         description: Server error
  */
-router.get("/subcomment", auth, getCommentSubcomment);
+router.get("/:id/subcomments", auth, getSubcomments);
 
 /**
  * @swagger
@@ -129,12 +141,19 @@ router.post(
 
 /**
  * @swagger
- * /comment/subcomment:
+ * /comment/{id}/subcomment:
  *   post:
  *     tags: [Comment]
  *     summary: Add a new subcomment
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the comment to respond to
  *     requestBody:
  *       required: true
  *       content:
@@ -143,15 +162,11 @@ router.post(
  *             type: object
  *             required:
  *               - content
- *               - commentId
  *               - threadId
  *             properties:
  *               content:
  *                 type: string
  *                 description: The content of the subcomment
- *               commentId:
- *                 type: integer
- *                 description: The ID of the comment to respond to
  *               threadId:
  *                 type: integer
  *                 description: The ID of the thread the comment belongs to
@@ -160,15 +175,14 @@ router.post(
  *         description: Successfully added subcomment
  *       404:
  *         description: User, Comment, or Thread does not exist
- *       401:
+ *       403:
  *         description: Permission denied
  *       500:
  *         description: Server error
  */
 router.post(
-  "/subcomment",
+  "/:id/subcomment",
   body("content").notEmpty(),
-  body("commentId").notEmpty(),
   body("threadId").notEmpty(),
   auth,
   ErrorMiddleware,

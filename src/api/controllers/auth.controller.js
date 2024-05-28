@@ -35,7 +35,7 @@ class authController {
       const names = await AuthService.generateRandomNames();
       res.status(200).json({
         status: true,
-        message: "Random names generated successfully ceva plus",
+        message: "Random names generated successfully",
         data: names,
       });
     } catch (e) {
