@@ -9,7 +9,7 @@ datasource db {
 
 model Comment {
   id        Int     @id @default(autoincrement())
-  content   String  @db.VarChar(255)
+  content   String  @db.VarChar(512)
   author_id Int
   like      Int     @default(0)
   dislike   Int     @default(0)
@@ -52,9 +52,11 @@ model CommunityUser {
 model Notification {
   notification_id Int       @id @default(autoincrement())
   user_ID         Int
-  time_sent       DateTime
+  time_sent       DateTime  @default(now())
   opened          Boolean?  @default(false)
   tagName         String?   @db.VarChar(50)
+  threadName      String?   @db.VarChar(50)
+  commentContent  String?   @db.VarChar(512)
   type            notifType
   User            User      @relation(fields: [user_ID], references: [id])
 }
@@ -74,7 +76,7 @@ model Thread {
   id            Int      @id @default(autoincrement())
   name          String   @db.VarChar(50)
   type          String   @default("text")
-  description   String?  @db.VarChar(255)
+  description   String?  @db.VarChar(512)
   owner_id      Int
   is_archived   Boolean? @default(false)
   creation_time DateTime @default(now())
@@ -121,4 +123,6 @@ enum notifType {
   UNMUTE
   TAG_REQ_REJECTED
   TAG_REQ_ACCEPTED
+  THREAD_CREATED
+  COMMENT_ADDED
 }

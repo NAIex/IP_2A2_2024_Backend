@@ -1,4 +1,5 @@
 import prisma from "../../prisma/index.js";
+import { notifType } from "@prisma/client";
 
 export const getThreads = async (req, res) => {
   const { id } = req.query;
@@ -88,6 +89,23 @@ export const addThread = async (req, res) => {
     });
     const threadCommunity = await prisma.communityThread.create({
       data: { community_id: communityId, thread_id: thread.id },
+    });
+
+    const communityUsers = await prisma.communityUser.findMany({
+      where: { community_id: communityId },
+      select: { user_id: true },
+    });
+
+    const userIds = communityUsers.map((c) => c.user_id);
+
+    userIds.forEach(async (idUser) => {
+      const notification = await prisma.notification.create({
+        data: {
+          user_ID: idUser,
+          type: notifType.THREAD_CREATED,
+          threadName: name,
+        },
+      });
     });
 
     res.status(201).send("Successfully add thread");

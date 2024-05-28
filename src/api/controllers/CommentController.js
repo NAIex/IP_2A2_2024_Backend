@@ -1,4 +1,5 @@
 import prisma from "../../prisma/index.js";
+import { notifType } from "@prisma/client";
 
 export const getComments = async (req, res) => {
   const comments = await prisma.comment.findMany();
@@ -162,6 +163,14 @@ export const addDirectComment = async (req, res) => {
       data: { thread_id: threadId, comment_id: comment.id },
     });
 
+    const notification = await prisma.notification.create({
+      data: {
+        user_ID: threadExists.owner_id,
+        type: notifType.COMMENT_ADDED,
+        threadName: threadExists.name,
+        commentContent: content,
+      },
+    });
     res.status(201).send("Successfully add comment");
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -213,6 +222,14 @@ export const addSubcomment = async (req, res) => {
       data: { comment_id: commentId, subcomment_id: comment.id },
     });
 
+    const notification = await prisma.notification.create({
+      data: {
+        user_ID: threadExists.owner_id,
+        type: notifType.COMMENT_ADDED,
+        threadName: threadExists.name,
+        commentContent: content,
+      },
+    });
     res.status(201).send("Successfully add comment");
   } catch (e) {
     res.status(500).json({ error: e.message });
