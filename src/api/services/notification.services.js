@@ -4,7 +4,7 @@ import prisma from "../../prisma/index.js";
 class NotificationService {
 
     static async getUserNotifications(req) {
-        const id = Number(req.query.userId);
+        let id = Number(req);
 
         const userNotifications = await prisma.Notification.findMany({
             where: { user_ID: id }
@@ -56,10 +56,10 @@ class NotificationService {
     }
     
     static async readAllNotifications(userData) {
-        const { id } = userData;
+        const { userId } = userData;
 
         const userNotifications = await prisma.Notification.findMany({
-            where: { user_ID: id }
+            where: { user_ID: userId }
         });
 
         if(!userNotifications) {
@@ -68,13 +68,11 @@ class NotificationService {
 
         try {
             await prisma.Notification.updateMany({
-                where: { user_ID: id },
+                where: { user_ID: userId },
                 data : {
                     opened: true
                 },
             });
-
-            return this.getUserNotifications({ id });
         } catch (error) {
             console.error(error);
             throw new Error("An error occurred while reading notifications");

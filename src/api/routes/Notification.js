@@ -15,14 +15,14 @@ const router = Router();
 /**
  * /**
   * @swagger
- * /notification:
+ * /notification/{id}:
  *   get:
  *     tags: [Notification]
  *     summary: View all notifications for a user
  *     description: Retrieves a list of notifications for a specific user.
  *     parameters:
- *       - in: query
- *         name: userId
+ *       - in: path
+ *         name: id
  *         required: true
  *         description: The ID of the user whose notifications are to be retrieved.
  *         schema:
@@ -33,7 +33,7 @@ const router = Router();
  *       '404':
  *         description: User does not have notifications
  */
-router.get('/:userId', notification.getUserNotifications);
+router.get('/:id', notification.getUserNotifications);
 /**
  * @swagger
  * /notification:
