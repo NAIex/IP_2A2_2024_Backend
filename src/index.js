@@ -20,7 +20,7 @@ import MutedUsers from "./api/routes/MutedUsers.js";
 import Comment from "./api/routes/Comment.js";
 import Feed from "./api/routes/Feed.js";
 
-// import Chat from "./api/routes/Chat.js";
+import Chat from "./api/routes/Chat.js";
 
 const app = express();
 const port = 4000;
@@ -46,7 +46,7 @@ app.use("/mute", MutedUsers);
 app.use("/comment", Comment);
 app.use("/feed", Feed);
 
-// app.use("/chat", Chat);
+app.use("/chat", Chat);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

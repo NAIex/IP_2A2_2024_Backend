@@ -135,9 +135,9 @@ model Conversation {
   userOneId     Int
   userTwoId     Int
   lastMessageAt DateTime? @default(now())
-  messages      Message[] // This already implies a reverse relation from Message to Conversation
+  messages      Message[]
 
-  @@index([userOneId, userTwoId])
+  @@index([userOneId, userTwoId], name: "idx_userOneId_userTwoId")
 }
 
 model WordBlacklist {
