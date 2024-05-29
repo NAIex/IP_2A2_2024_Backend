@@ -4,7 +4,7 @@ class NotificationController {
 
     static getUserNotifications = async (req, res, next) => {
         try {
-            const list = await notification.getUserNotifications(req);
+            const list = await notification.getUserNotifications(Number(req.params.userId));
             res.status(200).json({
                 status: true,
                 message: 'List of requested user notifications:',

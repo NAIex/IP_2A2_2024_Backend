@@ -11,7 +11,7 @@ class NotificationService {
         });
 
         if(!userNotifications) {
-            throw new Error("User does not have notifications.");
+            throw createError.NotFound("User does not have notifications");
         }
 
         try {
@@ -26,7 +26,7 @@ class NotificationService {
             return notifications;
         } catch (error) {
             console.error(error);
-            throw new Error("An error occurred while fetching notifications.");
+            throw new Error("An error occurred while fetching notifications");
         }
     }
 
@@ -38,11 +38,11 @@ class NotificationService {
         });
     
         if (!notification) {
-            throw new Error("Notification does not exist.");
+            throw createError.NotFound("Notification does not exist");
         }
         
         if (notification.opened == true) {
-            throw new Error("Notification already read.");
+            throw createError.Conflict("Notification already read");
         }
 
         await prisma.Notification.update({
@@ -58,12 +58,12 @@ class NotificationService {
     static async readAllNotifications(userData) {
         const { id } = userData;
 
-        const user = await prisma.User.findUnique({
-            where: { id: id }
+        const userNotifications = await prisma.Notification.findMany({
+            where: { user_ID: id }
         });
 
-        if(!user) {
-            throw new Error("User does not have notifications.");
+        if(!userNotifications) {
+            throw createError.NotFound("User does not have notifications");
         }
 
         try {
@@ -77,7 +77,7 @@ class NotificationService {
             return this.getUserNotifications({ id });
         } catch (error) {
             console.error(error);
-            throw new Error("An error occurred while reading notifications.");
+            throw new Error("An error occurred while reading notifications");
         }
     }
 }

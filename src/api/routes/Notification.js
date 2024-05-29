@@ -30,10 +30,10 @@ const router = Router();
  *     responses:
  *       '200':
  *         description: List of all requested user notifications
- *       '400':
- *         description: User doesn't have notifications or invalid user ID
+ *       '404':
+ *         description: User does not have notifications
  */
-router.get('/', notification.getUserNotifications);
+router.get('/:userId', notification.getUserNotifications);
 /**
  * @swagger
  * /notification:
@@ -53,8 +53,10 @@ router.get('/', notification.getUserNotifications);
  *     responses:
  *       '200':
  *         description: Notification read successfully
- *       '400':
- *         description: Notification does not exist / Notification already read
+ *       '404':
+ *         description: Notification does not exist
+ *       '409':
+ *         description: Notification already read
  */
 router.put('/', notification.readNotification);
 /**
@@ -76,7 +78,7 @@ router.put('/', notification.readNotification);
  *     responses:
  *       '200':
  *         description: Notifications read successfully
- *       '400':
+ *       '404':
  *         description: User does not have notifications
  */
 router.patch('/', notification.readAllNotifications);
