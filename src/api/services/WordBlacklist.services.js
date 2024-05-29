@@ -11,48 +11,59 @@ class WordBlacklistService {
     static async addWordToWordBlacklist(wordData) {
         const { word } = wordData;
 
-        if(!word) {
-            throw createError.BadRequest('Cannot provide empty word!');
-        } else {
-            const sameWord = await prisma.WordBlacklist.findUnique({
-                where: { word: word }
-            })
-
-            if(sameWord) {
-                throw createError.BadRequest('Word already exists in the blacklist!');
-            }
+        if (!word) {
+            throw createError.BadRequest('Cannot provide an empty word!');
         }
+        
+        try {
+            const sameWord = await prisma.wordBlacklist.findUnique({
+                where: { word: word }
+            });
 
-        let newWord = await prisma.wordBlacklist.create({
-            data: {
-                word: word
-            },
-        })
-        return newWord;
+            if (sameWord) {
+                throw createError.Conflict(`Word '${word}' already exists in the blacklist.`);
+            }
+
+            let newWord = await prisma.wordBlacklist.create({
+                data: {
+                    word: word
+                },
+            });
+            return newWord;
+
+        } catch (error) {
+            console.error("Error adding word to blacklist: ", error);
+            throw error;
+        }
     }
 
     static async deleteWordFromWordBlacklist(wordData) {
         const { word } = wordData;
 
-        if(!word) {
-            throw createError.BadRequest('Cannot provide empty word!');
-        } else {
-            const wordNotFound = await prisma.WordBlacklist.findUnique({
-                where: { word: word }
-            })
-
-            if(!wordNotFound) {
-                throw createError.BadRequest('Word not found in blacklist!');
-            }
+        if (!word) {
+            throw createError.BadRequest('Cannot provide an empty word!');
         }
 
-        const deletedWord = await prisma.WordBlacklist.delete({
-            where: { word: word }
-        });
+        try {
+            const wordToDelete = await prisma.wordBlacklist.findUnique({
+                where: { word: word }
+            });
 
-        return deletedWord;
+            if (!wordToDelete) {
+                throw createError.NotFound(`Word '${word}' not found in the blacklist.`);
+            }
+
+            const deletedWord = await prisma.wordBlacklist.delete({
+                where: { word: word }
+            });
+
+            return deletedWord;
+
+        } catch (error) {
+            console.error("Error deleting word from blacklist: ", error);
+            throw error;
+        }
     }
-
 }
 
 export default WordBlacklistService

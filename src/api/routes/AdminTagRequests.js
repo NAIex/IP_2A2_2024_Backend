@@ -18,7 +18,7 @@ const router = Router();
  *   get:
  *     tags: [/adminTag]
  *     summary: View all tag requests
- *     description: Shows a list of all the banned users on the platform.
+ *     description: Shows a list of all tag requests.
  *     responses:
  *       '200':
  *         description: List of all the current tag requests
