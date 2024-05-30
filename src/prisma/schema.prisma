@@ -134,10 +134,10 @@ model Conversation {
   id            Int       @id @default(autoincrement())
   userOneId     Int
   userTwoId     Int
-  lastMessageAt DateTime? @default(now())
+  lastMessageAt DateTime @updatedAt
   messages      Message[]
 
-  @@index([userOneId, userTwoId], name: "idx_userOneId_userTwoId")
+  @@unique([userOneId, userTwoId], name: "idx_userOneId_userTwoId")
 }
 
 model WordBlacklist {

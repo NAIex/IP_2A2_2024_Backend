@@ -3,6 +3,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+
 import swaggerUi from "swagger-ui-express";
 import specs from "./api/utils/swagger.js";
 
@@ -22,14 +25,32 @@ import Feed from "./api/routes/Feed.js";
 
 import Chat from "./api/routes/Chat.js";
 
+import chatSocket from "./api/controllers/newChat.js";
+import { setupCleanupTask } from "./api/utils/chat.js";
+
 const app = express();
 const port = 4000;
+
+
+
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer);
+
+
 
 app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+
+
+chatSocket(io);
+
+setupCleanupTask();
+
+
 
 app.use("/user", User);
 app.use("/adminTag", AdminTag);
