@@ -104,9 +104,9 @@ router.delete('/', auth, wbl.deleteWordFromWordBlacklist);
  *                 type: string
  *     responses:
  *       '200':
- *         description: Returns whether the text contains blacklisted words and the list of those words.
+ *         description: The text contains no prohibited words.
  *       '403':
- *         description: Forbidden - Text contains one or more blacklisted words.
+ *         description: The text contains prohibited words.
  *       '500':
  *         description: Internal Server Error - Error occurred during the process.
  */
