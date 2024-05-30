@@ -10,6 +10,7 @@ import User from "./api/routes/User.js";
 import AdminTag from "./api/routes/AdminTagRequests.js";
 import UserAuth from './api/routes/Auth.js';
 import WordBlacklist from './api/routes/WordBlacklist.js';
+import errBlacklist from './api/middlewares/blacklist.js';
 import Thread from "./api/routes/Thread.js";
 import Tag from "./api/routes/Tags.js"
 import Community from "./api/routes/Community.js";
@@ -32,6 +33,7 @@ app.use(bodyParser.json());
 app.use("/user", User);
 app.use("/adminTag", AdminTag);
 app.use("/blacklist", WordBlacklist);
+app.use(errBlacklist);
 app.use("/community", Community);
 app.use("/thread", Thread);
 
