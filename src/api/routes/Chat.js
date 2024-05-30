@@ -43,7 +43,7 @@ router.get('/:id', chat.getUserChats);
  *     description: Displays a list of all the messages in a specific chat of a specific user
  *     parameters:
  *       - in: path
- *         name: chatId
+ *         name: id
  *         required: true
  *         description: The chat of which messages we will display.
  *         schema:

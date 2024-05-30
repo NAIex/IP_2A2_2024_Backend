@@ -47,19 +47,19 @@ class ChatService {
     }
 
     static async getChatMessages(chatData) {
-        const {id} = chatData;
+        let chatId = Number(chatData);
     
-        const userChats = await prisma.Conversation.findFirst({
-            where: { id : id }
+        const chats = await prisma.Conversation.findFirst({
+            where: { id : chatId }
         });
 
-        if(!userChats) {
+        if(!chats) {
             throw createError.NotFound("Chat does not exist");
         }
 
         try {
             const messages = await prisma.Message.findMany({
-                where: { conversationId : id },
+                where: { conversationId : chatId },
                 orderBy: {
                     createdAt: 'desc'
                 }
