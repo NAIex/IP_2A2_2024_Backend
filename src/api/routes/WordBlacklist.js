@@ -90,7 +90,7 @@ router.delete('/', auth, wbl.deleteWordFromWordBlacklist);
  *   post:
  *     tags: [WordBlacklist]
  *     summary: Check text for blacklisted words
- *     description: Checks if the given text contains any blacklisted words, even if they are part of other words.
+ *     description: Checks if the given text contains any blacklisted words, but not if they are part of other words.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
