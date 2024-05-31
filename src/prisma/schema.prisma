@@ -100,23 +100,50 @@ model ThreadTag {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  email          String         @unique
-  password       String         @db.VarChar(60)
-  user_type      String         @default("user")
-  ban_status     Boolean?       @default(false)
-  unbanned_date  DateTime?
-  mute_status    Boolean        @default(false)
-  unmute_date    DateTime?
-  random_name    String?        @db.VarChar(50)
-  warnings_count Int
-  Notification   Notification[]
+  id                               Int            @id @default(autoincrement())
+  email                            String         @unique
+  password                         String         @db.VarChar(60)
+  user_type                        String         @default("user")
+  ban_status                       Boolean?       @default(false)
+  unbanned_date                    DateTime?
+  mute_status                      Boolean        @default(false)
+  unmute_date                      DateTime?
+  random_name                      String?        @db.VarChar(50)
+  warnings_count                   Int
+  Message_Message_receiverIdToUser Message[]      @relation("Message_receiverIdToUser")
+  Message_Message_senderIdToUser   Message[]      @relation("Message_senderIdToUser")
+  Notification                     Notification[]
 }
 
 model WordBlacklist {
   id        Int       @id @default(autoincrement())
   word      String    @unique
   dateAdded DateTime? @default(now())
+}
+
+model Conversation {
+  id            Int       @id @default(autoincrement())
+  userOneId     Int
+  userTwoId     Int
+  lastMessageAt DateTime? @default(now())
+  Message       Message[]
+
+  @@index([userOneId, userTwoId], map: "idx_userOneId_userTwoId")
+}
+
+model Message {
+  id                            Int          @id @default(autoincrement())
+  content                       String
+  createdAt                     DateTime     @default(now())
+  senderId                      Int
+  receiverId                    Int
+  conversationId                Int
+  Conversation                  Conversation @relation(fields: [conversationId], references: [id])
+  User_Message_receiverIdToUser User         @relation("Message_receiverIdToUser", fields: [receiverId], references: [id])
+  User_Message_senderIdToUser   User         @relation("Message_senderIdToUser", fields: [senderId], references: [id])
+
+  @@index([receiverId], map: "idx_receiver")
+  @@index([senderId], map: "idx_sender")
 }
 
 enum notifType {
