@@ -191,3 +191,36 @@ export const getDirectComments = async (req, res) => {
     res.status(500).json(e);
   }
 };
+
+export const getThreadCommentCount = async (req, res) => {
+  const threadId = Number(req.params.id);
+
+  try {
+    const directComments = await prisma.threadDirectComments.findMany({
+      where: { thread_id: threadId },
+      select: { comment_id: true },
+    });
+
+    const directCommentIds = directComments.map((dc) => dc.comment_id);
+
+    const countSubcomments = async (commentIds) => {
+      if (commentIds.length === 0) return 0;
+
+      const subcomments = await prisma.commentSubcomment.findMany({
+        where: { comment_id: { in: commentIds } },
+        select: { subcomment_id: true },
+      });
+
+      const subcommentIds = subcomments.map((sc) => sc.subcomment_id);
+
+      return subcommentIds.length + (await countSubcomments(subcommentIds));
+    };
+
+    const totalSubcomments = await countSubcomments(directCommentIds);
+    const totalComments = directCommentIds.length + totalSubcomments;
+
+    res.status(200).json({ totalComments });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};

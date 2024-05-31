@@ -7,6 +7,7 @@ import {
   getThreads,
   removeThread,
   getDirectComments,
+  getThreadCommentCount,
 } from "../controllers/ThreadController.js";
 import auth from "../middlewares/auth.js";
 
@@ -173,5 +174,29 @@ router.delete(
  *         description: Server error
  */
 router.get("/:id/comments", auth, getDirectComments);
+
+/**
+ * @swagger
+ * /thread/{id}/comments/count:
+ *   get:
+ *     tags: [Thread]
+ *     summary: Return the total count of comments for a specific thread (including direct comments and all subcomments)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve comment count for
+ *     responses:
+ *       200:
+ *         description: The total count of comments for the specified thread
+ *       500:
+ *         description: Server error
+ */
+
+router.get("/:id/comments/count", auth, ErrorMiddleware, getThreadCommentCount);
 
 export default router;
