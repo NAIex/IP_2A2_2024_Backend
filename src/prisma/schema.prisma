@@ -125,10 +125,10 @@ model Conversation {
   id            Int       @id @default(autoincrement())
   userOneId     Int
   userTwoId     Int
-  lastMessageAt DateTime? @default(now())
+  lastMessageAt DateTime
   Message       Message[]
 
-  @@index([userOneId, userTwoId], map: "idx_userOneId_userTwoId")
+  @@unique([userOneId, userTwoId])
 }
 
 model Message {

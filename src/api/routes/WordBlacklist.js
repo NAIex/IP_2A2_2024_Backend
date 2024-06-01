@@ -1,6 +1,6 @@
 import { Router } from "express";
 import wbl from "../controllers/WordBlacklist.controller.js";
-import auth from "../middlewares/auth.js";
+import Auth from "../middlewares/auth.js";
 
 const router = Router();
 
@@ -24,7 +24,7 @@ const router = Router();
  *       '200':
  *         description: List of blacklisted words returned successfully.
  */
-router.get('/', auth, wbl.viewWordBlacklist);
+router.get('/', Auth, wbl.viewWordBlacklist);
 
 /**
  * @swagger
@@ -54,7 +54,7 @@ router.get('/', auth, wbl.viewWordBlacklist);
  *       '500':
  *         description: Internal server error.
  */
-router.put('/', auth, wbl.addWordToWordBlacklist);
+router.put('/', Auth, wbl.addWordToWordBlacklist);
 
 /**
  * @swagger
@@ -82,7 +82,7 @@ router.put('/', auth, wbl.addWordToWordBlacklist);
  *       '500':
  *         description: Internal server error.
  */
-router.delete('/', auth, wbl.deleteWordFromWordBlacklist);
+router.delete('/', Auth, wbl.deleteWordFromWordBlacklist);
 
 /**
  * @swagger
@@ -111,6 +111,6 @@ router.delete('/', auth, wbl.deleteWordFromWordBlacklist);
  *         description: Internal Server Error - Error occurred during the process.
  */
 
-router.post('/', auth, wbl.checkText);
+router.post('/', Auth, wbl.checkText);
 
 export default router;

@@ -64,21 +64,35 @@ class WordBlacklistService {
         }
     }
 
-    static async checkTextForBlacklistedWords(text) {
+    static async checkTextForBlacklistedWords(req) {
+
+        const text = req.body.text;
+        const userId = req.user.userId;
+
         try {
             const blacklistEntries = await prisma.WordBlacklist.findMany();
             const blacklistedWords = blacklistEntries.map(entry => entry.word.toLowerCase());
-
-            const inputWords = text.toLowerCase().split(/\s+/);
-
+    
+            const inputWords = text.toLowerCase().split(/[\s,.!?;:()]+/).filter(Boolean);
             const foundBlacklistedWords = inputWords.filter(word => blacklistedWords.includes(word));
-
+    
+            if (foundBlacklistedWords.length > 0) {
+                await prisma.User.update({
+                    where: { id: userId },
+                    data: {
+                        warnings_count: {
+                            increment: 1
+                        }
+                    }
+                });
+            }
             return foundBlacklistedWords;
         } catch (error) {
             console.error("Error during blacklist check:", error);
             throw createError(500, "Internal server error while checking the blacklist.");
         }
     }
+    
 }
 
 export default WordBlacklistService;
