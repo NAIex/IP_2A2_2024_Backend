@@ -42,8 +42,7 @@ class WordBlacklistController {
 
     static async checkText(req, res, next) {
         try {
-            const { text } = req.body;
-            const foundBlacklistedWords = await WordBlacklistService.checkTextForBlacklistedWords(text);
+            const foundBlacklistedWords = await WordBlacklistService.checkTextForBlacklistedWords(req);
 
             if (foundBlacklistedWords.length > 0) {
                 res.status(403).json({
