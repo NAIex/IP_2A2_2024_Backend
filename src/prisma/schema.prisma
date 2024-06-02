@@ -8,12 +8,12 @@ datasource db {
 }
 
 model Comment {
-  id            Int      @id @default(autoincrement())
-  content       String   @db.VarChar(512)
-  author_id     Int
-  like          Int      @default(0)
-  dislike       Int      @default(0)
-  deleted       Boolean  @default(false)
+  id        Int     @id @default(autoincrement())
+  content   String  @db.VarChar(512)
+  author_id Int
+  like      Int     @default(0)
+  dislike   Int     @default(0)
+  deleted   Boolean @default(false)
   creation_time DateTime @default(now())
 }
 
