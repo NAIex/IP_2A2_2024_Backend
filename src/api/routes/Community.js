@@ -108,8 +108,8 @@ router.post("/", body("name").notEmpty(), auth, ErrorMiddleware, addCommunity);
  *     responses:
  *       204:
  *         description: Successfully removed community
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Community does not exist
  *       500:
@@ -185,8 +185,8 @@ router.post(
  *     responses:
  *       204:
  *         description: Successfully removed user from community
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Community does not exist
  *       500:

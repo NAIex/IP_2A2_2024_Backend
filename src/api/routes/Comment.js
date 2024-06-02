@@ -125,7 +125,7 @@ router.get("/:id/subcomments", auth, getSubcomments);
  *         description: Successfully added comment
  *       404:
  *         description: User or Thread does not exist
- *       401:
+ *       403:
  *         description: Permission denied
  *       500:
  *         description: Server error
@@ -212,8 +212,8 @@ router.post(
  *     responses:
  *       204:
  *         description: Successfully removed thread
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Comment does not exist
  *       500:

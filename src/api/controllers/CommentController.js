@@ -243,7 +243,7 @@ export const deleteComment = async (req, res) => {
     });
 
     if (!userIsAuthor && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
