@@ -283,3 +283,157 @@ export const deleteComment = async (req, res) => {
     res.status(500).json(e);
   }
 };
+
+export const likeComment = async (req, res) => {
+
+  const { commentId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    const commentExists = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!commentExists) {
+      res.status(404).send("Comment does not exist");
+      return;
+    }
+    // check if the user already liked/disliked the comment
+
+    const likedComment = await prisma.CommentsInteraction.findFirst({
+      where: { id_user: userId, id_comment: commentId},
+    });
+
+
+    // if the user has already liked the comment then remove the like
+    if (likedComment) {
+      if(likedComment.is_disliked)
+        {
+          // if the comment is disliked, pressing like will remove the dislike as well
+          await prisma.CommentsInteraction.update({
+            where: { id: commentId}, data: { dislike: false, like : true },
+          });
+          await prisma.Comment.update({
+            where: { id: commentId}, data: {dislike: {decrement: 1 }, like: { increment: 1}},
+          });
+          return;
+          
+        }   
+        if(likedComment.is_liked)
+        {
+          // if the comment is liked then it unlikes it
+          await prisma.comment.update({
+            where: { id: commentId },
+            data: { like: { decrement: 1 } },
+          });
+          await prisma.CommentsInteraction.delete({
+            where: { id_user: userId, id_comment: commentId },
+          });
+          res.status(200).send("Successfully removed like from the comment");
+          return;
+        }
+    }
+
+    // If the user hasn't liked /disliked the comment yet add the like
+    await prisma.CommentsInteraction.create({
+      data: {
+        id_user: userId,
+        id_comment: commentId,
+        is_liked: true,
+        is_disliked: false,
+      },
+    });
+
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { like: { increment: 1 } },
+    });
+    console.log('Added like to comment');
+    res.status(200).send("Successfully liked the comment");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+export const dislikeComment = async (req, res) => {
+  const { commentId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    const commentExists = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!commentExists) {
+      res.status(404).send("Comment does not exist");
+      return;
+    }
+    // check if the user already liked/disliked the comment
+    const likedComment = await prisma.CommentsInteraction.findFirst({
+      where: { id_user: userId, id_comment: commentId},
+    });
+
+    // if the user has already liked the comment then remove the like
+    if (likedComment) {
+      if(likedComment.is_liked)
+        {
+          // if the comment is liked, pressing like will remove the like as well
+          await prisma.CommentsInteraction.update({
+            where: { id: commentId}, data: { dislike: true, like : false },
+          });
+          await prisma.Comment.update({
+            where: { id: commentId}, data: {like: {decrement: 1 }, dislike: { increment: 1}},
+          });
+          return;
+          
+        }   
+        if(likedComment.is_disliked)
+        {
+          // if the comment is disliked then it removes the entry in db
+          await prisma.comment.update({
+            where: { id: commentId },
+            data: { dislike: { decrement: 1 } },
+          });
+          await prisma.CommentsInteraction.delete({
+            where: { id_user: userId, id_comment: commentId },
+          });
+          res.status(200).send("Successfully removed the dislike from the comment");
+          return;
+        }
+    }
+
+    // If the user hasn't liked /disliked the comment yet add the like
+    await prisma.CommentsInteraction.create({
+      data: {
+        id_user: userId,
+        id_comment: commentId,
+        is_liked: false,
+        is_disliked: true,
+      },
+    });
+
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { dislike: { increment: 1 } },
+    });
+
+    res.status(200).send("Successfully disliked the comment");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
