@@ -7,8 +7,37 @@ export const getCommunity = async (req, res) => {
 };
 
 export const getUserCommunity = async (req, res) => {
-  const communities = await prisma.communityUser.findMany();
-  res.send(communities);
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    const userCommunities = await prisma.communityUser.findMany({
+      where: { user_id: userId },
+    });
+
+    const userCommunitiesIds = userCommunities.map((c) => c.community_id);
+    const communities = await prisma.community.findMany({
+      where: {
+        id: { in: userCommunitiesIds },
+      },
+      orderBy: {
+        creation_time: "desc",
+      },
+    });
+
+    res.send(communities);
+
+    res.status(200).json(threads);
+  } catch (e) {
+    res.status(500).json(e);
+  }
 };
 
 export const addCommunity = async (req, res) => {
