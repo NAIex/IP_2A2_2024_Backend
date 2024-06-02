@@ -23,7 +23,7 @@ export const getUserFeed = async (req, res) => {
         community_id: { in: communityIds },
       },
     });
-
+    communityThreads.reverse();
     const threadsWithCommunityTitle = await Promise.all(
       communityThreads.map(async (communityThread) => {
         const thread = await prisma.thread.findUnique({

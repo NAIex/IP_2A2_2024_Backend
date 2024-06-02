@@ -33,7 +33,7 @@ export const getThreads = async (req, res) => {
       });
       if (!userJoinCommunity.length) {
         res
-          .status(401)
+          .status(403)
           .send("Permission denied! User is not a member of the community.");
         return;
       }
@@ -80,7 +80,7 @@ export const addThread = async (req, res) => {
     });
     if (!userJoinCommunity.length) {
       res
-        .status(401)
+        .status(403)
         .send("Permission denied! User is not a member of the community.");
       return;
     }
@@ -139,7 +139,7 @@ export const removeThread = async (req, res) => {
     });
 
     if (!userIsAuthor && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -153,5 +153,92 @@ export const removeThread = async (req, res) => {
     res.status(204).send("Successfully removed thread");
   } catch (e) {
     res.status(500).json(e);
+  }
+};
+
+export const getDirectComments = async (req, res) => {
+  const threadId = Number(req.params.id);
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+
+    let data = await prisma.thread.findUnique({
+      where: { id: threadId },
+    });
+    if (!data) {
+      res.status(404).send("Thread does not exist");
+      return;
+    }
+    const community = await prisma.communityThread.findUnique({
+      where: { thread_id: threadId },
+    });
+
+    const userJoinCommunity = await prisma.communityUser.findMany({
+      where: { user_id: userId, community_id: community.community_id },
+    });
+    if (!userJoinCommunity.length) {
+      res
+        .status(403)
+        .send("Permission denied! User is not a member of the community.");
+      return;
+    }
+    const commentsThread = await prisma.threadDirectComments.findMany({
+      where: { thread_id: threadId },
+      select: { comment_id: true },
+    });
+
+    const commentIds = commentsThread.map((c) => c.comment_id);
+    data = await prisma.comment.findMany({
+      where: {
+        id: { in: commentIds },
+      },
+      orderBy: {
+        creation_time: "desc",
+      },
+    });
+
+    res.send(data);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+export const getThreadCommentCount = async (req, res) => {
+  const threadId = Number(req.params.id);
+
+  try {
+    const directComments = await prisma.threadDirectComments.findMany({
+      where: { thread_id: threadId },
+      select: { comment_id: true },
+    });
+
+    const directCommentIds = directComments.map((dc) => dc.comment_id);
+
+    const countSubcomments = async (commentIds) => {
+      if (commentIds.length === 0) return 0;
+
+      const subcomments = await prisma.commentSubcomment.findMany({
+        where: { comment_id: { in: commentIds } },
+        select: { subcomment_id: true },
+      });
+
+      const subcommentIds = subcomments.map((sc) => sc.subcomment_id);
+
+      return subcommentIds.length + (await countSubcomments(subcommentIds));
+    };
+
+    const totalSubcomments = await countSubcomments(directCommentIds);
+    const totalComments = directCommentIds.length + totalSubcomments;
+
+    res.status(200).json({ totalComments });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 };

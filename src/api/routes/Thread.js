@@ -6,6 +6,8 @@ import {
   getThreadCommunity,
   getThreads,
   removeThread,
+  getDirectComments,
+  getThreadCommentCount,
 } from "../controllers/ThreadController.js";
 import auth from "../middlewares/auth.js";
 
@@ -34,7 +36,7 @@ const router = Router();
  *     responses:
  *       200:
  *         description: A list of threads or a specific thread
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Thread does not exist
@@ -92,7 +94,7 @@ router.get("/community", auth, getThreadCommunity);
  *     responses:
  *       201:
  *         description: Successfully created thread
- *       401:
+ *       403:
  *         description: Permission denied! User is not a member of the community.
  *       404:
  *         description: User or Community does not exist
@@ -131,8 +133,8 @@ router.post(
  *     responses:
  *       204:
  *         description: Successfully removed thread
- *       401:
- *         description: Unauthorized
+ *       403:
+ *         description: Permission denied!
  *       404:
  *         description: User or Thread does not exist
  *       500:
@@ -145,5 +147,56 @@ router.delete(
   ErrorMiddleware,
   removeThread
 );
+
+/**
+ * @swagger
+ * /thread/{id}/comments:
+ *   get:
+ *     tags: [Thread]
+ *     summary: Return direct comments for a specific thread
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve comments for
+ *     responses:
+ *       200:
+ *         description: A list of direct comments for the specified thread
+ *       403:
+ *         description: Permission denied! User is not a member of the community.
+ *       404:
+ *         description: User or Thread does not exist
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id/comments", auth, getDirectComments);
+
+/**
+ * @swagger
+ * /thread/{id}/comments/count:
+ *   get:
+ *     tags: [Thread]
+ *     summary: Return the total count of comments for a specific thread (including direct comments and all subcomments)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the thread to retrieve comment count for
+ *     responses:
+ *       200:
+ *         description: The total count of comments for the specified thread
+ *       500:
+ *         description: Server error
+ */
+
+router.get("/:id/comments/count", auth, ErrorMiddleware, getThreadCommentCount);
 
 export default router;

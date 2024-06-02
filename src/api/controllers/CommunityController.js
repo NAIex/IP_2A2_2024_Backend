@@ -26,6 +26,9 @@ export const addCommunity = async (req, res) => {
     const community = await prisma.community.create({
       data: { author_id: userId, name, description },
     });
+    const addUser = await prisma.communityUser.create({
+      data: { user_id: userId, community_id: community.id },
+    });
     res.status(201).json({
       message: "Successfully created community",
       id: community.id,
@@ -60,7 +63,7 @@ export const removeCommunity = async (req, res) => {
     });
 
     if (!userIsAuthor && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -99,7 +102,7 @@ export const addUserToCommunity = async (req, res) => {
     }
 
     if (communityExists.archived || communityExists.disabled) {
-      return res.status(401).send("Unauthorized");
+      return res.status(403).send("Permission denied!");
     }
 
     const addUser = await prisma.communityUser.create({
@@ -143,7 +146,7 @@ export const removeUserFromCommunity = async (req, res) => {
       where: { id: communityId, author_id: userId },
     });
     if (!userIsAuthor && userId != userToRemoveId && !req.user.isAdmin) {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -185,7 +188,7 @@ export const turnOffCommunity = async (req, res) => {
       where: { id: communityId, author_id: userId },
     });
     if (!userIsAuthor && user.user_type != "admin") {
-      res.status(401).send("Unauthorized");
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -232,6 +235,9 @@ export const getCommunityThreads = async (req, res) => {
     const threads = await prisma.thread.findMany({
       where: {
         id: { in: communityIds },
+      },
+      orderBy: {
+        creation_time: "desc",
       },
     });
     res.status(200).json(threads);
