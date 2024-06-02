@@ -41,7 +41,6 @@ class BanService {
             where: { id: id },
             data: { 
                 ban_status: false,
-                warnings_count: 0,
                 unbanned_date: null 
             },
         });
@@ -76,6 +75,7 @@ class BanService {
             where: { id: id },
             data: { 
                 ban_status: true,
+                warnings_count: 0,
                 unbanned_date: unbanDate
             },
         });

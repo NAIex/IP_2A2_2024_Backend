@@ -42,7 +42,6 @@ class MuteService {
             where: { id: id },
             data: { 
                 mute_status: false,
-                warnings_count: 0,
                 unmute_date: null 
             },
         });
@@ -92,7 +91,7 @@ class MuteService {
             data: { 
                 mute_status: true,
                 unmute_date: unmuteDate,
-		        warnings_count: { increment: 1 }
+                warnings_count: 0,
             },
         });
 
