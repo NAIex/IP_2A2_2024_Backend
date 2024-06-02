@@ -12,37 +12,44 @@ export const getUserCommunity = async (req, res) => {
 };
 
 export const addCommunity = async (req, res) => {
-  const { authorId, name, description } = req.body;
+  const { name, description } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
   try {
     const user = await prisma.user.findUnique({
-      where: { id: authorId },
+      where: { id: userId, email: userEmail },
     });
     if (!user) {
       res.status(404).send("User does not exist");
       return;
     }
     const community = await prisma.community.create({
-      data: { author_id: authorId, name, description },
+      data: { author_id: userId, name, description },
     });
-    res.status(201).send("Successfully created community");
+    const addUser = await prisma.communityUser.create({
+      data: { user_id: userId, community_id: community.id },
+    });
+    res.status(201).json({
+      message: "Successfully created community",
+      id: community.id,
+    });
   } catch (e) {
     res.status(500).json(e);
   }
 };
 
 export const removeCommunity = async (req, res) => {
-  const { userId, removeCommunityId } = req.body;
+  const { removeCommunityId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
   try {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { user_type: true },
+      where: { id: userId, email: userEmail },
     });
-
     if (!user) {
       res.status(404).send("User does not exist");
       return;
     }
-
     const communityExists = await prisma.community.findUnique({
       where: { id: removeCommunityId },
     });
@@ -55,8 +62,8 @@ export const removeCommunity = async (req, res) => {
       where: { id: removeCommunityId, author_id: userId },
     });
 
-    if (!userIsAuthor && user.user_type != "admin") {
-      res.status(401).send("Unauthorized");
+    if (!userIsAuthor && !req.user.isAdmin) {
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -74,13 +81,15 @@ export const removeCommunity = async (req, res) => {
 };
 
 export const addUserToCommunity = async (req, res) => {
-  const { userId, communityId } = req.body;
+  const { communityId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
 
   try {
-    const userExists = await prisma.user.findUnique({
-      where: { id: userId },
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
     });
-    if (!userExists) {
+    if (!user) {
       res.status(404).send("User does not exist");
       return;
     }
@@ -91,7 +100,12 @@ export const addUserToCommunity = async (req, res) => {
       res.status(404).send("Community does not exist");
       return;
     }
-    const user = await prisma.communityUser.create({
+
+    if (communityExists.archived || communityExists.disabled) {
+      return res.status(403).send("Permission denied!");
+    }
+
+    const addUser = await prisma.communityUser.create({
       data: { user_id: userId, community_id: communityId },
     });
     res.status(201).send("Successfully added user to community");
@@ -101,11 +115,13 @@ export const addUserToCommunity = async (req, res) => {
 };
 
 export const removeUserFromCommunity = async (req, res) => {
-  const { userId, userToRemoveId, communityId } = req.body;
+  const { userToRemoveId, communityId } = req.body;
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+
   try {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { user_type: true },
+      where: { id: userId, email: userEmail },
     });
     if (!user) {
       res.status(404).send("User does not exist");
@@ -129,12 +145,8 @@ export const removeUserFromCommunity = async (req, res) => {
     const userIsAuthor = await prisma.community.findUnique({
       where: { id: communityId, author_id: userId },
     });
-    if (
-      !userIsAuthor &&
-      userId != userToRemoveId &&
-      user.user_type != "admin"
-    ) {
-      res.status(401).send("Unauthorized");
+    if (!userIsAuthor && userId != userToRemoveId && !req.user.isAdmin) {
+      res.status(403).send("Permission denied!");
       return;
     }
 
@@ -148,6 +160,87 @@ export const removeUserFromCommunity = async (req, res) => {
       return;
     }
     res.status(204).send("Successful removal of the user from the community");
+  } catch (e) {
+    res.status(500).json(e);
+  }
+};
+
+export const turnOffCommunity = async (req, res) => {
+  const { userId, communityId, type } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { user_type: true },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+    const communityDB = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!communityDB) {
+      res.status(404).send("Community does not exist");
+      return;
+    }
+
+    const userIsAuthor = await prisma.community.findUnique({
+      where: { id: communityId, author_id: userId },
+    });
+    if (!userIsAuthor && user.user_type != "admin") {
+      res.status(403).send("Permission denied!");
+      return;
+    }
+
+    const communityUpdated = await prisma.community.update({
+      where: { id: communityId },
+      data: {
+        ...(type == "archive"
+          ? { archived: !communityDB.archived }
+          : { disabled: !communityDB.disabled }),
+      },
+    });
+
+    res.status(200).send("Successfully updated");
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
+};
+
+export const getCommunityThreads = async (req, res) => {
+  const userId = req.user.userId;
+  const userEmail = req.user.email;
+  const communityId = Number(req.params.id);
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId, email: userEmail },
+    });
+    if (!user) {
+      res.status(404).send("User does not exist");
+      return;
+    }
+    const communityExists = await prisma.community.findUnique({
+      where: { id: communityId },
+    });
+    if (!communityExists) {
+      res.status(404).send("Community does not exist");
+      return;
+    }
+    const communityThreads = await prisma.communityThread.findMany({
+      where: { community_id: communityId },
+      select: { thread_id: true },
+    });
+    const communityIds = communityThreads.map((c) => c.thread_id);
+    const threads = await prisma.thread.findMany({
+      where: {
+        id: { in: communityIds },
+      },
+      orderBy: {
+        creation_time: "desc",
+      },
+    });
+    res.status(200).json(threads);
   } catch (e) {
     res.status(500).json(e);
   }
